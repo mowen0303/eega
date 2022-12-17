@@ -3,17 +3,11 @@ ob_start();
 require_once $_SERVER['DOCUMENT_ROOT'] . "/commonServices/config.php";
 try {
     $userModel = new \model\UserModel();
-    $registerModel = new \model\RegisterModel();
-    $inventoryModel = new \model\InventoryModel();
-    $productModel = new \model\ProductModel();
-    $currentUserId = $userModel->getCurrentUserId();
-    $registerAmountOfProcessing = $registerModel->getAmountOfProcessing();
-    $productCategoryArr = $productModel->getProductCategories([0]);
-    if($userModel->isCurrentUserHasAuthority("WAREHOUSE","ADD")){
-        $warehouseArr = $inventoryModel->getWarehouses([0],['sort'=>'asc']);
-    }else{
-        $warehouseArr = $inventoryModel->getMyWarehouse($currentUserId);
+    if(!$userModel->isCurrentUserHasAuthority("SYSTEM_SETTING","ADMIN_LOGIN")){
+        $userModel->logout();
+        Helper::throwException(null,403);
     }
+    $currentUserId = $userModel->getCurrentUserId();
 } catch (Exception $e) {
     Helper::echoJson($e->getCode(), $e->getMessage(),null,null,null,'/admin/adminLogin.php');
     die();
@@ -108,7 +102,7 @@ try {
                             </div>
                         </li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="/admin/setting/index.php?s=my-profile"><i class="ti-user"></i> My Profile</a></li>
+                        <li><a href="/admin/user/index.php?s=user-list-form&uid=<?=$currentUserId?>"><i class="ti-user"></i> My Profile</a></li>
 <!--                        <li><a href="#"><i class="ti-email"></i> Inbox</a></li>-->
                         <li role="separator" class="divider"></li>
                         <li><a href="/restAPI/userController.php?action=logout"><i class="fa fa-power-off"></i> Logout</a></li>
@@ -133,110 +127,10 @@ try {
                 <ul class="nav" id="side-menu">
 <!--                    <li><a href="/admin/adminIndex.php" class="waves-effect"><i class="mdi mdi-av-timer fa-fw"></i> <span class="hide-menu">Dashboard</span></a></li>-->
 
-                    <li><a href="/admin/order/index.php" class="waves-effect"><i class="mdi mdi-cart-outline fa-fw"></i> <span class="hide-menu">Order<span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="/admin/order/index.php?s=quotation-list" class="waves-effect"><i class="mdi mdi-format-list-bulleted fa-fw"></i> <span class="hide-menu">My Quotation</span></a></li>
-                            <li><a href="/admin/order/index.php?s=order-list" class="waves-effect"><i class="mdi mdi-format-list-bulleted fa-fw"></i> <span class="hide-menu">My Orders</span></a></li>
-                            <?if($userModel->isCurrentUserHasAnyOneOfAuthorities([
-                                    ["ORDER_MANAGEMENT_ADMIN","SUPER_ORDER_ADMIN_FOR_ALL_ORDERS"],
-                                    ["ORDER_MANAGEMENT_ADMIN","EDIT_ORDER_FOR_OTHERS"],
-                                    ["ORDER_MANAGEMENT_ADMIN","EDIT_ORDER_FOR_OTHERS"],
-                                    ["ORDER_MANAGEMENT_ADMIN","EDIT_ORDER_FOR_OTHERS"],
-                                    ["ORDER_MANAGEMENT_ADMIN","STATUS_CHANGE_FOR_CONFIRM_PAYMENT"],
-                                    ["ORDER_MANAGEMENT_ADMIN","STATUS_CHANGE_FOR_READY_FOR_PICK_UP"],
-                                    ["ORDER_MANAGEMENT_ADMIN","STATUS_CHANGE_FOR_PICKED_UP"],
-                                    ["ORDER_MANAGEMENT_ADMIN","STATUS_CHANGE_FOR_SHIPPED"],
-                                    ["ORDER_MANAGEMENT_ADMIN","STATUS_CHANGE_FOR_DELIVERED"]
-                            ])){?>
-                                <li><a href="/admin/order/index.php?s=order-management-list" class="waves-effect"><i class="mdi mdi-format-list-bulleted fa-fw"></i> <span class="hide-menu">Order Management</span></a></li>
-                            <?}?>
-                        </ul>
-                    </li>
-
-                    <li><a href="/admin/product" class="waves-effect"><i class="mdi mdi-package fa-fw"></i> <span class="hide-menu">Products<span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="/admin/product/index.php?s=product-list&productCategoryId=0" class="waves-effect"><span class="hide-menu">All products</span></a></li>
-                            <?php
-                            foreach ($productCategoryArr as $productCategory){
-                            ?>
-                                <li><a class="text-in-one-line" href="/admin/product/index.php?s=product-list&productCategoryId=<?=$productCategory['product_category_id']?>"><span class="hide-menu"><?=$productCategory['product_category_title'] ?></span></a></li>
-                            <?php
-                            }
-                            ?>
-                        </ul>
-                    </li>
-
-                    <?php if($userModel->isCurrentUserHasAuthority("ITEM","GET_LIST")){?>
-                        <li><a href="/admin/dealer" class="waves-effect"><i class="mdi mdi-account-card-details fa-fw"></i> <span class="hide-menu">Dealer<span class="fa arrow"></span><?=Helper::echoLabel($registerAmountOfProcessing)?></span></a>
-                            <ul class="nav nav-second-level">
-                                <?php if($userModel->isCurrentUserHasAuthority("DEALER_APPLICATION","REVIEW")){?>
-                                    <li><a href="/admin/dealer/application/index.php?s=dealer-application-list&status=waiting_in_review" class="waves-effect"><i class="mdi mdi-clipboard-text fa-fw"></i> <span class="hide-menu">Dealer Application</span><?=Helper::echoLabel($registerAmountOfProcessing)?></span></a></li>
-                                <?php } ?>
-                                <?php if($userModel->isCurrentUserHasAuthority("COMPANY","GET_LIST")){?>
-                                    <li><a href="/admin/dealer/company/index.php" class="waves-effect"><i class="mdi mdi-city fa-fw"></i> <span class="hide-menu">Dealer information</span></a></li>
-                                <?php } ?>
-                            </ul>
-                        </li>
-                    <?php } ?>
-
-                    <?php if($userModel->isCurrentUserHasAnyOneOfAuthorities([['INVENTORY', 'GET_LIST'], ['WAREHOUSE', 'GET_LIST']])
-                        || $userModel->isCurrentUserHasWarehouseManagementAuthority(0)
-                    ){ ?>
-                        <li><a href="/admin/inventory/index.php" class="waves-effect"><i class="mdi mdi-grid fa-fw"></i> <span class="hide-menu">Inventory<span class="fa arrow"></span></span></a>
-                            <ul class="nav nav-second-level">
-                                <?php if($userModel->isCurrentUserHasAuthority("INVENTORY","GET_LIST")){?>
-                                    <li><a href="/admin/inventory/index.php?s=inventory-item-list"><i class="mdi mdi-view-module fa-fw"></i><span class="hide-menu">Item Inventory</span></a></li>
-                                <?php } ?>
-
-                                <?php
-                                foreach ($warehouseArr as $warehouse){
-                                    ?>
-                                    <li><a class="text-in-one-line" href="/admin/inventory/index.php?s=inventory-warehouse-item&warehouseId=<?=$warehouse['warehouse_id']?>"><i class="mdi mdi-cube fa-fw"></i><span class="hide-menu"><?=$warehouse['warehouse_address'] ?></span></a></li>
-                                    <?php
-                                }
-                                ?>
-
-                                <?php if($userModel->isCurrentUserHasAuthority("INVENTORY","GET_LIST")){?>
-                                    <li><a href="/admin/inventory/index.php?s=inventory-log-list"><i class="mdi mdi-file-document-box fa-fw"></i><span class="hide-menu">Inventory Log</span></a></li>
-                                <?php } ?>
-
-                                <?php if($userModel->isCurrentUserHasAuthority("INVENTORY","ITEM_IMPORT_REFERENCE")){?>
-                                    <li><a href="/admin/inventory/index.php?s=inventory-import-reference"><i class="mdi mdi-file-document-box fa-fw"></i><span class="hide-menu">Import Reference</span></a></li>
-                                <?php } ?>
-                            </ul>
-                        </li>
-                    <?php } ?>
-
-
-                    <?php if($userModel->isCurrentUserHasAuthority("ITEM","GET_LIST")){?>
-                        <li><a href="/admin/item/index.php" class="waves-effect"><i class="mdi mdi-tag fa-fw"></i> <span class="hide-menu">Specification<span class="fa arrow"></span></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/admin/item/index.php?s=item-list"><i class="mdi mdi-tag-multiple fa-fw"></i><span class="hide-menu">Item List</span></a></li>
-                                <li><a href="/admin/item/index.php?s=item-category"><i class="mdi mdi-folder-star fa-fw"></i><span class="hide-menu">Category</span></a></li>
-                                <li><a href="/admin/item/index.php?s=item-style"><i class="mdi mdi-creation fa-fw"></i><span class="hide-menu">Door Style</span></a></li>
-                            </ul>
-                        </li>
-                    <?php } ?>
-
 
                     <li class="devider"></li>
 
-                    <?php if($userModel->isCurrentUserHasAuthority("USER","GET_LIST")){?>
-                        <li><a href="/admin/user/index.php" class="waves-effect"><i class="mdi mdi-account-circle  fa-fw"></i> <span class="hide-menu">User<span class="fa arrow"></span></span></a>
-                            <ul class="nav nav-second-level">
-                                <li><a href="/admin/user/index.php?s=user-list&type=all"><i class="mdi mdi-account-multiple fa-fw"></i><span class="hide-menu">All User</span></a></li>
-                                <li><a href="/admin/user/index.php?s=user-list&type=internal"><i class="mdi mdi-account-multiple fa-fw"></i><span class="hide-menu">Internal User</span></a></li>
-                                <li><a href="/admin/user/index.php?s=user-list&type=external"><i class="mdi mdi-account-multiple fa-fw"></i><span class="hide-menu">External User</span></a></li>
-                            </ul>
-                        </li>
-                    <?php } ?>
-
-                    <li><a href="/admin/setting/index.php" class="waves-effect"><i class="mdi mdi-settings-box fa-fw"></i> <span class="hide-menu">Setting<span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="/admin/setting/index.php?s=my-profile"><i class="mdi mdi-account-settings-variant fa-fw"></i><span class="hide-menu">My Profile</span></a></li>
-                            <li><a href="/admin/setting/index.php?s=billing-address-list"><i class="mdi mdi-map-marker fa-fw"></i><span class="hide-menu">Billing address</span></a></li>
-                        </ul>
-                    </li>
+                    <li><a href="/admin/user/index.php?s=user-list" class="waves-effect"><i class="mdi mdi-account-circle  fa-fw"></i> <span class="hide-menu">User<span class="fa arrow"></span></span></a></li>
 
                     <?php if($userModel->isCurrentUserHasAnyOneOfAuthorities([
                             ["SYSTEM_SETTING","USER_CATEGORY"],
@@ -248,15 +142,6 @@ try {
                         <ul class="nav nav-second-level">
                             <?php if($userModel->isCurrentUserHasAuthority('SYSTEM_SETTING','USER_CATEGORY')){?>
                                 <li><a href="/admin/system/index.php?s=system-user-category-list"><i class="mdi mdi-sitemap fa-fw"></i><span class="hide-menu">User Authority</span></a></li>
-                            <?php }?>
-                            <?php if($userModel->isCurrentUserHasAuthority('SYSTEM_SETTING','SUPER_BUTTON')){?>
-                                <li><a href="/admin/system/index.php?s=system-super-button"><i class="mdi mdi-alert-octagram fa-fw"></i><span class="hide-menu">Super Button</span></a></li>
-                            <?php }?>
-                            <?php if($userModel->isCurrentUserHasAuthority('SYSTEM_SETTING','PRODUCT_INVENTORY_THRESHOLD')){?>
-                                <li><a href="/admin/system/index.php?s=system-product-threshold"><i class="mdi mdi-call-missed fa-fw"></i><span class="hide-menu">Inventory threshold</span></a></li>
-                            <?php }?>
-                            <?php if($userModel->isCurrentUserHasAuthority('AGENDA','GET_LIST')){?>
-                                <li><a href="/admin/system/index.php?s=system-agenda-list"><i class="mdi mdi-clock-fast fa-fw"></i><span class="hide-menu">Agenda</span></a></li>
                             <?php }?>
                         </ul>
                     </li>

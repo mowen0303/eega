@@ -15,7 +15,7 @@ try {
     </div>
     <label class="col-sm-8 control-label">
         <?php Helper::echoBackBtn(1);?>
-        <a href="index.php?s=system-user-category-form" class="btn btn-danger pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light"><i class="fas fa-plus-circle"></i> Create User Category</a>
+        <a href="index.php?s=system-user-category-list-form" class="btn btn-danger pull-right m-l-20 hidden-xs hidden-sm waves-effect waves-light"><i class="fas fa-plus-circle"></i> Create User Category</a>
     </label>
 </div>
 <!--header end-->
@@ -45,7 +45,7 @@ try {
                                 <td><div class="label label-table label-info">Level <?php echo $row['user_category_level']?></div></td>
                                 <td><?php echo $row['user_category_title']?></td>
                                 <td>
-                                    <a  href="/admin/system/index.php?s=system-user-category-form&userCategoryId=<?php echo $row['user_category_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
+                                    <a  href="/admin/system/index.php?s=system-user-category-list-form&userCategoryId=<?php echo $row['user_category_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
                                 </td>
                             </tr>
                         <?php

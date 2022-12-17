@@ -20,4 +20,8 @@ require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/Model.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/authority.php";
 spl_autoload_register(function($name){$name = str_replace("\\","/",$name);include_once $_SERVER['DOCUMENT_ROOT']."/{$name}.php";});
 call_user_func(@$_GET['action']);
+
+
+
+const WEBSITE_NAME = "EEGA";
 ?>

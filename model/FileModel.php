@@ -157,7 +157,8 @@ class FileModel extends Model {
         if($storeInDB) {
             ($sectionName && $sectionId) or Helper::throwException('Invalid sectionName or sectionId');
         }
-        $count = $this->getNumOfUploadImages($inputName,$allowedFileType) or Helper::throwException("No image to upload.");   //获取文件上传数量
+//        $count = $this->getNumOfUploadImages($inputName,$allowedFileType) or Helper::throwException("No image to upload.");   //获取文件上传数量
+        $count = $this->getNumOfUploadImages($inputName,$allowedFileType) or Helper::throwException("");   //获取文件上传数量
         $file = $_FILES[$inputName];
         $results = [];  // successfully uploaded images information
 

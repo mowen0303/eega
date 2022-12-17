@@ -3,7 +3,12 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/commonServices/config.php";
 try {
     $userModel = new \model\UserModel();
     $userModel->getCurrentUserId() or Helper::throwException("未登录",403);
-    Helper::jumpTo('/admin/product/index.php?s=product-list&productCategoryId=0');
+    if(!$userModel->isCurrentUserHasAuthority("SYSTEM_SETTING","ADMIN_LOGIN")){
+        $userModel->logout();
+        Helper::jumpTo('/admin/adminLogin.php');
+        die();
+    }
+    Helper::jumpTo('admin/user/index.php?s=user-list');
     die();
 } catch (Exception $e) {
 
@@ -17,7 +22,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Woodworth Kitchen Cabinetry - Quality Redefined</title>
+    <title><?=WEBSITE_NAME?> Admin System</title>
     <!-- Bootstrap Core CSS -->
     <link href="/admin/resource/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- animation CSS -->
@@ -41,22 +46,25 @@ try {
     </style>
 </head>
 <body>
-<!-- Preloader -->
 <div class="preloader">
     <div class="cssload-speeding-wheel"></div>
 </div>
-
-<section id="wrapper" class="login-register">
-    <div class="login-box" style="background: rgba(0,0,0,0)">
-        <div style="margin-bottom: 2em;text-align: center"><img style="width: 100px;" src="/resource/img/logo.png"></div>
-        <div class="white-box" style="border-radius: 6px; background: rgba(255,255,255,0.92)">
-            <h3 class="box-title m-b-0">WLink System Login</h3>
+<section id="wrapper" class="new-login-register">
+    <div class="lg-info-panel">
+        <div class="inner-panel">
+            <div class="lg-content"></div>
+        </div>
+    </div>
+    <div class="new-login-box">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Sign In to Admin</h3>
+            <small>Enter your details below</small>
             <form class="form-horizontal new-lg-form" id="loginform" action="/restAPI/userController.php?action=login" method="post">
 
                 <div class="form-group  m-t-20">
                     <div class="col-xs-12">
-                        <label>Email Address</label>
-                        <input class="form-control" name="user_email" type="text" required="" placeholder="Email">
+                        <label>User name</label>
+                        <input class="form-control" name="user_name" type="text" required="" placeholder="Email">
                     </div>
                 </div>
                 <div class="form-group">
@@ -71,29 +79,10 @@ try {
                     </div>
                 </div>
             </form>
-            <form class="form-horizontal" id="recoverform" action="index.html">
-                <div class="form-group ">
-                    <div class="col-xs-12">
-                        <h3>Recover Password</h3>
-                        <p class="text-muted">Enter your Email and instructions will be sent to you! </p>
-                    </div>
-                </div>
-                <div class="form-group ">
-                    <div class="col-xs-12">
-                        <input class="form-control" type="text" required="" placeholder="Email">
-                    </div>
-                </div>
-                <div class="form-group text-center m-t-20">
-                    <div class="col-xs-12">
-                        <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Reset</button>
-                    </div>
-                </div>
-            </form>
-            <div style="text-align: right">
-                <a href="/register.html" target="_blank">Become a Dealer</a>
-            </div>
         </div>
     </div>
+
+
 </section>
 <!-- jQuery -->
 <script src="/admin/resource/plugins/bower_components/jquery/dist/jquery.min.js"></script>

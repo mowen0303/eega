@@ -1,7 +1,6 @@
 <?php
 try {
     global $userModel;
-    $userModel->isCurrentUserHasAuthority("USER","VIEW_OTHER") or Helper::throwException(null,403);
     $userArr = $userModel->getUsers([0],$_GET);
     $type = $_GET['type'];
     switch ($type){
@@ -26,7 +25,7 @@ try {
     </div>
     <label class="col-sm-8 control-label">
         <?php Helper::echoBackBtn(1);?>
-        <a href="/admin/user/index.php?s=user-form" class="btn btn-danger pull-right"><i class="fas fa-plus-circle"></i>  Add User</a>
+        <a href="/admin/user/index.php?s=user-list-form" class="btn btn-danger pull-right"><i class="fas fa-plus-circle"></i>  Add User</a>
     </label>
 </div>
 
@@ -40,7 +39,7 @@ try {
                 <input type="hidden" name="type" value="<?=$_GET['type']?>">
                 <div class="row">
                     <div class="<?=$_GET['searchValue']?'col-sm-8':'col-sm-10'?>">
-                        <input class="form-control" placeholder="Email / Name" type="text" name="searchValue" value="<?=$_GET['searchValue']?>">
+                        <input class="form-control" placeholder="Username" type="text" name="searchValue" value="<?=$_GET['searchValue']?>">
                     </div>
                     <div class="col-sm-2">
                         <button class="btn btn-block btn-info waves-effect waves-light" type="submit">Search</button>
@@ -92,12 +91,12 @@ try {
                         <thead>
                         <tr>
                             <th width="21px"><input id="cBoxAll" type="checkbox"></th>
-                            <th>#</th>
                             <th>AVATAR</th>
-                            <th><a <?=$userModel->getUserListOrderUrl('lastName')?>>NAME / EMAIL</a></th>
-                            <th><a <?=$userModel->getUserListOrderUrl('company')?>>COMPANY</a></th>
+                            <th><a <?=$userModel->getUserListOrderUrl('lastName')?>>NAME / Username</a></th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>GROUP</th>
                             <th><a <?=$userModel->getUserListOrderUrl('lastLoginTime')?>>LAST LOGIN TIME</a></th>
-                            <th><a <?=$userModel->getUserListOrderUrl('group')?>>GROUP</a></th>
                             <th width="70"></th>
                         </tr>
                         </thead>
@@ -109,19 +108,19 @@ try {
                                 <td>
                                     <input type="checkbox" class="cBox" name="id[]" value="<?=$row['user_id']?>">
                                 </td>
-                                <td data-hl-orderby="registerTime"><?php echo $row['user_id'] ?></td>
                                 <td><div class="avatar avatar-40" style="background-image: url('<?=$row['user_avatar']?>')"></td>
-                                <td data-hl-orderby="lastName">
+                                <td data-hl-orderby="username">
                                     <a data-hl-search href="/admin/user/index.php?s=user-list-profile&userId=<?=$row['user_id']?>"><?=$row['user_first_name'] ?> <?=$row['user_last_name'] ?></a>
                                     <br>
-                                    <span data-hl-search><?=$row['user_email'] ?></span>
+                                    <span data-hl-search><?=$row['user_name'] ?></span>
                                 </td>
-                                <td><?=$row['company_name']?></td>
+                                <td><?=$row['user_email']?></td>
+                                <td><?=$row['user_phone']?></td>
+                                <td><span class="label label-success"><?=$row['user_category_title']?></span></td>
                                 <td data-hl-orderby="lastLoginTime"><?=$row['user_last_login_time']?></td>
-                                <td data-hl-orderby="group"><span class="label label-success"><?=$row['user_category_title']?></span></td>
                                 <td>
-                                    <a href="/admin/user/index.php?s=user-form&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
-                                    <a href="/admin/user/index.php?s=user-pwd-form&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Change Password"><i class="ti-key"></i></a>
+                                    <a href="/admin/user/index.php?s=user-list-form&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
+                                    <a href="/admin/user/index.php?s=user-list-pwd-form&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Change Password"><i class="ti-key"></i></a>
                                 </td>
                             </tr>
                             <?php

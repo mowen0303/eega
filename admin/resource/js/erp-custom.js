@@ -271,7 +271,9 @@ $(document).ready(function () {
 
         drEvent.on('dropify.fileReady', function(event, element){
             let name = $(this).attr("data-name");
-            console.log($(this).siblings(`#${name}`).val(1))
+            $("input[name='deleteUploadedImage']").val(false);
+            console.log($("input[name='deleteUploadedImage']").val())
+            // console.log($(this).siblings(`#${name}`).val(1))
 
         });
 
@@ -281,7 +283,9 @@ $(document).ready(function () {
 
         drEvent.on('dropify.afterClear', function(event, element){
             let name = $(this).attr("data-name");
-            console.log($(this).siblings(`#${name}`).val(-1))
+            // console.log($(this).siblings(`#${name}`).val(-1))
+            $("input[name='deleteUploadedImage']").val(true);
+            // console.log($(this))
         });
     }
 

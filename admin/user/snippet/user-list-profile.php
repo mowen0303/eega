@@ -1,9 +1,8 @@
 <?php
 try {
     global $userModel;
-    $userModel->isCurrentUserHasAuthority("USER","VIEW_OTHER",$_GET['userId']) or Helper::throwException(null,403);
     $userId = (int) Helper::get('userId',"User Id can not be null");
-    $user = $userModel->getProfileOfUserById($userId,true);
+    $user = $userModel->getProfileOfUserById($userId);
     $company = $user;
     $companyLocation = $user;
     $profileTitle = "User Profile";
@@ -25,5 +24,3 @@ try {
 </div>
 <!--header end-->
 <?php require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/user/snippet/user-info.php" ?>
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/dealer/company/snippet/company-info.php" ?>
-<?php require_once $_SERVER['DOCUMENT_ROOT'] . "/admin/dealer/company/snippet/company-location-info.php" ?>

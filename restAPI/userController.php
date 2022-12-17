@@ -9,7 +9,7 @@ function login(){
         $userModel = new \model\UserModel();
         $userModel->login();
 //        Helper::jumpTo('/admin/adminIndex.php');
-        Helper::jumpTo('/admin/order/index.php?s=order-list');
+        Helper::jumpTo('/admin/user/index.php?s=user-list');
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
     }
@@ -121,6 +121,16 @@ function deleteUserCategoryByIds() {
         $userModel->isCurrentUserHasAuthority('SYSTEM_SETTING', 'USER_CATEGORY') or Helper::throwException(null, 403);
         $effectRows = $userModel->deleteUserCategoryByIds();
         Helper::echoJson(200, "Success : {$effectRows} rows data has been deleted", null, null, null, $_SESSION['back_url_1']);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()}");
+    }
+}
+
+function generatePINOfCurrentUser() {
+    try {
+        $userModel = new \model\UserModel();
+        $result = $userModel->generatePIN($userModel->getCurrentUserId());
+        Helper::echoJson(200, "Success", $result, null, null, $_SESSION['back_url_1']);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()}");
     }

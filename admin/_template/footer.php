@@ -1,6 +1,6 @@
 </div>
 <!-- /.container-fluid -->
-<footer class="footer text-center"> 2020 &copy; WoodWorth Cabinetry (v0.0.3)</footer>
+<footer class="footer text-center"> 2023 &copy; V-TEC (v0.0.1)</footer>
 </div>
 <!-- ============================================================== -->
 <!-- End Page Content -->

@@ -15,7 +15,7 @@ class SqlTool
         if ($this->mysqli->connect_error) {
             Helper::throwException('Can not access to DB '.$dbInfo['database'], 500);
         }
-        $this->mysqli->query("set names utf8");
+        $this->mysqli->query("set names utf8mb4");
     }
 
     /**

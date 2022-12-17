@@ -29,10 +29,10 @@ class UserModel extends Model
      * @throws \Exception
      */
     public function login() {
-        $email = Helper::post('user_email', "user name can not be empty");
+        $email = Helper::post('user_name', "user name can not be empty");
         $pwd = Helper::post('user_pwd', "password can not be empty",6);
         $pwd = md5($pwd);
-        $sql = "SELECT user_id FROM user WHERE user_email = ? AND user_pwd = ?  AND user_status > 0";
+        $sql = "SELECT user_id FROM user WHERE user_name = ? AND user_pwd = ?  AND user_status > 0";
         $row = $this->sqltool->getRowBySql($sql, [$email, $pwd]);
         $row or Helper::throwException("Username or password is incorrect", 400);
         $this->updateUserCheckinLastTime($row['user_id']);
@@ -47,12 +47,12 @@ class UserModel extends Model
      * @throws \Exception
      */
     private function setCookie(int $userId) {
-        $row = $this->getProfileOfUserById($userId, true);
+        $row = $this->getProfileOfUserById($userId);
         $time = Helper::isRequestFromCMS() ? 0 : time() + 3600 * 24 * 1;
         //设置Cookie
         $arr['cc_id'] = $row['user_id'];                //保护
         $arr['cc_uc'] = $row['user_user_category_id'];  //保护
-        $arr['cc_na'] = $row['user_email'];              //保护
+        $arr['cc_na'] = $row['user_name'];              //保护
         $arr['cc_ul'] = $row['user_category_level'];    //保护
         $arr['cc_cc'] = md5($arr['cc_id'] . $arr['cc_uc'] . $arr['cc_na'] . $arr['cc_ul'] . USER_PK);
         $arr['user_alias'] = $row['user_alias'];
@@ -98,7 +98,7 @@ class UserModel extends Model
     }
 
     public function getCurrentUserName() {
-        $result = @$_COOKIE['user_last_name']." ".@$_COOKIE['user_first_name'] or Helper::throwException('You did not login yet', 403);
+        $result = @$_COOKIE['user_first_name']." ".@$_COOKIE['user_last_name'] or Helper::throwException('You did not login yet', 403);
         return $result;
     }
 
@@ -127,13 +127,9 @@ class UserModel extends Model
      * @return array
      * @throws \Exception
      */
-    public function getProfileOfUserById(int $id,$joinCompany=false) {
+    public function getProfileOfUserById(int $id) {
         $id > 0 or Helper::throwException('user Id is not valid');
-        $joinCondition = "";
-        if($joinCompany){
-            $joinCondition .= " LEFT JOIN company_location ON company_location_id = user_company_location_id LEFT JOIN company ON company_id = company_location_company_id ";
-        }
-        $sql = "SELECT * FROM user INNER JOIN user_category ON user_user_category_id = user_category_id {$joinCondition} WHERE user_id IN (?) AND user_status > 0";
+        $sql = "SELECT * FROM user INNER JOIN user_category ON user_user_category_id = user_category_id WHERE user_id IN (?) AND user_status > 0";
         $row = $this->sqltool->getRowBySql($sql, [$id]);
         $row or Helper::throwException("can not find user id: $id");
         unset($row['user_pwd']);
@@ -213,22 +209,6 @@ class UserModel extends Model
         return false;
     }
 
-
-
-    /**
-     * @param $warehouseId
-     * @return bool
-     * @throws \Exception
-     */
-    public function isCurrentUserHasWarehouseManagementAuthority(int $warehouseId){
-        $whereCondition = "true";
-        if($warehouseId > 0){
-            $whereCondition .= " AND warehouse_manager_warehouse_id IN ({$warehouseId})";
-        }
-        $sql = "SELECT warehouse_manager_id FROM warehouse_manager WHERE {$whereCondition} AND warehouse_manager_user_id IN ({$this->getCurrentUserId()})";
-        return (bool) $this->sqltool->getRowBySql($sql);
-    }
-
     /**
      * @param array $userIds
      * @param array $option
@@ -249,7 +229,13 @@ class UserModel extends Model
         }
 
         if($option['searchValue']){
-            $whereCondition .= "AND (user_email LIKE '%{$option['searchValue']}%' OR concat(user_first_name,' ',user_last_name) LIKE '%{$option['searchValue']}%')";
+            $whereCondition .= "AND (
+            user_name LIKE '%{$option['searchValue']}%' 
+            OR concat(user_first_name,' ',user_last_name) LIKE '%{$option['searchValue']}%'
+            OR concat(user_first_name,user_last_name) LIKE '%{$option['searchValue']}%'
+            OR concat(user_last_name,' ',user_first_name) LIKE '%{$option['searchValue']}%'
+            OR concat(user_last_name,user_first_name) LIKE '%{$option['searchValue']}%'
+            )";
         }
 
         if($option['customSelectFields']){
@@ -260,16 +246,6 @@ class UserModel extends Model
         if($option['userCategoryId']){
             $id = (int) $option['userCategoryId'];
             $whereCondition .= "AND user_category_id IN ({$id})";
-        }
-
-        if($option['companyId']){
-            $id = (int) $option['companyId'];
-            $whereCondition .= "AND company_id IN ({$id})";
-        }
-
-        if($option['companyLocationId']){
-            $id = (int) $option['companyLocationId'];
-            $whereCondition .= "AND user_company_location_id IN ({$id})";
         }
 
         if($option['type'] == 'internal'){
@@ -299,11 +275,11 @@ class UserModel extends Model
             $orderCondition = "company_name {$sort},";
         }
 
-        $sql = "SELECT {$selectFields} FROM user INNER JOIN user_category ON user_user_category_id = user_category_id LEFT JOIN company_location ON user_company_location_id = company_location_id LEFT JOIN company ON company_location_company_id = company_id WHERE true {$whereCondition} ORDER BY {$orderCondition} user_id DESC";
+        $sql = "SELECT {$selectFields} FROM user INNER JOIN user_category ON user_user_category_id = user_category_id WHERE true {$whereCondition} ORDER BY {$orderCondition} user_id DESC";
         if(array_sum($userIds)!=0){
-            return $this->sqltool->getListBySql($sql,$bindParams);
+            $result = $this->sqltool->getListBySql($sql,$bindParams);
         }else{
-            return $this->getListWithPage('user',$sql,$bindParams,$pageSize);
+            $result = $this->getListWithPage('user',$sql,$bindParams,$pageSize);
         }
 
         if($result){
@@ -311,6 +287,7 @@ class UserModel extends Model
                 unset($result[$key]['user_pwd']);
             }
         }
+
         return $result;
 
     }
@@ -323,47 +300,33 @@ class UserModel extends Model
     public function modifyUser(int $id=null){
         $isAdminManage = (int) Helper::post('isAdminManage');
         if($isAdminManage){
-            $arr['user_company_location_id'] = (int) Helper::post('user_company_location_id', 'User Location Id can not be null');
             if($id != $this->getCurrentUserId()){
                 $arr['user_user_category_id'] = (int) Helper::post('user_user_category_id', 'User Category Id can not be null');
                 $targetUserCategoryLevel = $this->getUserCategoryById($arr['user_user_category_id'])['user_category_level'] or Helper::throwException("User category does not exist",404);
                 $this->getCurrentUserCategoryLevel() < $targetUserCategoryLevel or Helper::throwException("You can not add/update a user who has the same or higher than you");
-                //如果有绑定dealer to seller 的权限
-                if($this->isCurrentUserHasAuthority("USER","BIND_DEALER_TO_SELLER")){
-                    $arr['user_reference_user_id'] = (int) Helper::post('user_reference_user_id');
-                    if($arr['user_reference_user_id']>0){
-                        $this->getProfileOfUserById($arr['user_reference_user_id']);
-                        $arr['user_reference_user_id'] != $id or Helper::throwException("Can not bind the user to himself");
-                    }
-                }
             }
         }
         $arr['user_last_name'] = ucfirst(strtolower(Helper::post('user_last_name','Last Name can not be null')));
         $arr['user_first_name'] = ucfirst(strtolower(Helper::post('user_first_name','First Name can not be null')));
-        $arr['user_role'] = Helper::post('user_role','Role can not be null');
-        $arr['user_phone'] = Helper::post('user_phone','Phone can not be null');
-        $arr['user_fax'] = Helper::post('user_fax');
-        $arr['user_address'] = Helper::post('user_address');
-        $arr['user_business_hour'] = Helper::post('user_business_hour');
+        $arr['user_phone'] = Helper::post('user_phone');
+        $arr['user_email'] = Helper::post('user_email');
         $arr['user_status'] = 1;
         //validate
-        Helper::validatePhoneNumber($arr['user_phone']);
+        if($arr['user_phone']) Helper::validatePhoneNumber($arr['user_phone']);
+        if($arr['user_email']) Helper::validateEmail($arr['user_email']);
         if ($id) {
             //修改
             $this->updateRowById('user', $id, $arr,false);
         } else {
             //添加
             $arr['user_avatar'] = $this->defaultAvatar;
-            $arr['user_email'] = Helper::post('user_email','Email can not be null',6);
+            $arr['user_name'] = Helper::post('user_name','User name can not be null',4);
             $arr['user_pwd'] = md5(Helper::post('user_pwd','Password can not be null',6));
-            //validate
-            Helper::validateEmail($arr['user_email']);
-            !$this->isExistByFieldValue('user','user_email',$arr['user_email']) or Helper::throwException('Email  has already existed',400);
             $id = $this->addRow('user', $arr);
         }
         //上传图片
-        if($id){
-            $oldImg = $this->getProfileOfUserById($id)['user_avatar'];
+        $oldImg = $this->getProfileOfUserById($id)['user_avatar'];
+        if($id && Helper::post('deleteUploadedImage') !== 'true'){
             //上传图片
             $uploadedImg = null;
             try{
@@ -374,8 +337,15 @@ class UserModel extends Model
                 if($oldImg != $this->defaultAvatar) $fileModel->deleteFileByPath($oldImg);
             }catch (\Exception $e){
                 $fileModel->deleteFileByPath($uploadedImg);
-                $this->imgError = " (Image status: {$e->getMessage()})";
+                if($e->getMessage()){
+                    $this->imgError = " (Image status: {$e->getMessage()})";
+                }
             }
+        }else if($id){
+            $fileModel = new FileModel();
+            if($oldImg != $this->defaultAvatar) $fileModel->deleteFileByPath($oldImg);
+            $newArr['user_avatar'] = $this->defaultAvatar;
+            $this->updateRowById('user',$id,$newArr);
         }
         if($id == $this->getCurrentUserId()) $this->setCookie($id);
         return $id;
@@ -548,6 +518,25 @@ class UserModel extends Model
         }
         //s=user-list&userCategoryId=12&orderBy=registerTime&sort=asc
         return " href='/admin/user/index.php?s=user-list&type={$_GET['type']}&searchValue={$_GET['searchValue']}&userCategoryId={$_GET['userCategoryId']}&orderBy={$orderBy}&sort={$sort}&page={$_GET['page']}' data-hl-orderby='{$orderBy}' ";
+    }
+
+    public function generatePIN($userId){
+        $charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $pickedUpChar = "";
+        for($i=0; $i<4; $i++){
+            $index = rand(0,strlen($charSet)-1);
+            $pickedUpChar.= $charSet[$index];
+        }
+        $pickedUpChar = $userId."-".$pickedUpChar;
+        $sql = "SELECT user_pin FROM user WHERE user_pin = ?";
+        $row = $this->sqltool->getRowBySql($sql, [$pickedUpChar]);
+        if($row === NULL){
+            $sql = "UPDATE user SET user_pin = ? WHERE user_id = ?";
+            $this->sqltool->query($sql,[$pickedUpChar,$userId]);
+            return $pickedUpChar;
+        }else{
+            return $this->generatePIN($userId);
+        }
     }
 }
 
