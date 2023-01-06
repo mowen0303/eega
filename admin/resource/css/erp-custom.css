@@ -95,6 +95,37 @@ table h3 {margin-bottom: 0}
 .swal2-popup .swal2-styled.swal2-confirm,.swal2-popup .swal2-styled.swal2-cancel {font-size: 13px;margin:10px 5px 10px 5px}
 .select2-container .select2-dropdown {z-index: 999999 !important;}
 
+
+.participantsBtnWrap .participantsBtnRow {
+    position:relative;
+    padding-bottom: 1em;
+    overflow: auto;
+}
+.participantsBtnWrap .participantsBtn {
+    float: left;;
+    width: calc(25% - 10px);
+    margin:0 3px;
+    height: 40px;
+    line-height: 40px;
+    border:1px dashed #ccc;
+    text-align: center;
+    color: #ccc;
+    cursor:pointer;
+    background: #fafafa;
+    transition-duration: 0.5s;
+}
+
+.participantsBtnWrap .participantsBtn:hover {
+    border-color: #2cabe3;
+    color:#2cabe3;
+    background: #cbeffd;
+
+}
+
+.participantsBtnWrap .participantsGroupTitle {
+
+}
+
 @media print {
     a[href]:after {
         content: none !important;

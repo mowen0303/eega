@@ -9,9 +9,16 @@ $_AUT = [
     'USER'=>
         [
             'GET'=>getAuthorityNum(1),
-            'ADD'=>getAuthorityNum(3),
-            'UPDATE'=>getAuthorityNum(4),
-            'DELETE'=>getAuthorityNum(5),
+            'ADD'=>getAuthorityNum(2),
+            'UPDATE'=>getAuthorityNum(3),
+            'DELETE'=>getAuthorityNum(4),
+        ],
+    'EVENT'=>
+        [
+            'GET'=>getAuthorityNum(1),
+            'ADD'=>getAuthorityNum(2),
+            'UPDATE'=>getAuthorityNum(3),
+            'DELETE'=>getAuthorityNum(4),
         ]
 ];
 function getAuthorityNum($int){return pow(2,$int);}

@@ -411,4 +411,95 @@ $(document).ready(function () {
             return true;
         }
     })
+
+    //participant part start
+    const participantsWrap = $("#participantsWrap");
+    if(participantsWrap.length>0){
+        //build DOM
+        const participantMax = participantsWrap.attr("data-max");
+        let addButtonDom = $("<div class='participantsBtnWrap'></div>");
+        let groupIndex = 1;
+        let rowDom = null;
+        for(let i = 0; i < participantMax; i++){
+            let isNewLine = i%4==0;
+            if(isNewLine){
+                rowDom = $("<div class='participantsBtnRow'><div class='participantsGroupTitle'>Group "+ groupIndex++ +"</div></div>");
+                rowDom.appendTo(addButtonDom);
+            }
+            $("<div class='participantsBtn' data-index='"+i+"'>+</div>").appendTo(rowDom)
+        }
+        addButtonDom.appendTo(participantsWrap);
+
+        //add data
+        const eventId = participantsWrap.attr('data-event-id');
+        let url = `/restAPI/eventController.php?action=getParticipants&event_id=${eventId}&dataType=json`;
+        let options = {
+            method: "GET",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            credentials: 'same-origin',
+        };
+        fetch(url,options)
+            .then(response=>response.json())
+            .then(json=>{
+                if(json.code === 200){
+                    const {result} = json;
+                    result && result.forEach(x=>{
+                        $(".participantsBtn").eq(x.participant_index).text(`${x.user_first_name} ${x.user_last_name}`).attr('data-user-id',x.participant_user_id)
+                    })
+                }else{
+                    alert(json.message)
+                }
+            })
+
+
+        $(".participantsBtn").each(function(index){
+            $(this).click(function(){
+                let currentBtnDOM = $(this);
+                if(currentBtnDOM.text() == "+"){
+                    $("input[name=participant_index]").val(index);
+                    let url = "/restAPI/eventController.php?action=addParticipantByAdmin&dataType=json";
+                    let options = {
+                        method: "POST",
+                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                        body: $("#participantsForm").serialize(),
+                        credentials: 'same-origin',
+                    };
+                    fetch(url,options)
+                        .then(response=>response.json())
+                        .then(json=>{
+                            if(json.code === 200){
+                                const {result} = json;
+                                const name = `${result.user_first_name} ${result.user_last_name}`;
+                                currentBtnDOM.text(name).attr('data-user-id',result.participant_user_id);
+                            }else{
+                                alert(json.message)
+                            }
+                        })
+                }else{
+                    $("input[name=participant_user_id]").val(currentBtnDOM.attr('data-user-id'));
+                    let url = "/restAPI/eventController.php?action=deleteParticipantByAdmin&dataType=json";
+                    let options = {
+                        method: "POST",
+                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                        body: $("#participantsForm").serialize(),
+                        credentials: 'same-origin',
+                    };
+                    fetch(url,options)
+                        .then(response=>response.json())
+                        .then(json=>{
+                            if(json.code === 200){
+                                const {result} = json;
+                                currentBtnDOM.text("+").attr('data-user-id',0);
+                            }else{
+                                alert(json.message)
+                            }
+                        })
+                }
+
+            })
+        })
+
+
+
+    }
 });

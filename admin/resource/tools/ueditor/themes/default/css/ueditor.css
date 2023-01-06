@@ -181,6 +181,7 @@ div.edui-box {
 
 .edui-default .edui-editor-iframeholder {
     position: relative;
+    border: 1px solid #e4e7ea;
     /*for fix ie6 toolbarmsg under iframe bug. relative -> static */
     /*_position: static !important;*
 }

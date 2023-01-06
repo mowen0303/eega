@@ -43,6 +43,13 @@
             $(this).parents(".printableArea").printArea(options);
         })
     });
+    // Date Picker
+    jQuery('#datepicker-autoclose').datepicker({
+        autoclose: true,
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        orientation: 'bottom',
+    });
 </script>
 </body>
 </html>

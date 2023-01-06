@@ -19,7 +19,7 @@
      * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
      * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
      */
-    var URL = "/adminPSCMS/resource/tools/ueditor/";
+    var URL = "/admin/resource/tools/ueditor/";
 
     /**
      * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
@@ -34,10 +34,10 @@
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
         , toolbars: [[
-            'source','drafts','|','removeformat', 'autotypeset','pasteplain','|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript',  'blockquote',  '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist',
+            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'blockquote',  '|', 'forecolor', 'backcolor','|', 'insertorderedlist', 'insertunorderedlist',
              'paragraph', 'fontsize', '|',
-            'justifyleft', 'justifycenter', 'justifyright','|', 'touppercase', 'tolowercase', '|',
-            'link', 'unlink', '|', 'insertimage', 'emotion', 'horizontal', 'spechars','|', 'inserttable'
+            'justifyleft', 'justifycenter', 'justifyright','|',
+            'link', 'unlink', '|', 'insertimage','|', 'inserttable','drafts','removeformat', 'autotypeset','pasteplain','source',
         ]]
 		// , toolbars: [[
         //     'fullscreen', 'source', '|', 'undo', 'redo', '|',
@@ -89,14 +89,14 @@
         //如果自定义，最好给p标签如下的行高，要不输入中文时，会有跳动感
         //,initialStyle:'p{line-height:1em}'//编辑器层级的基数,可以用来改变字体等
 
-        ,iframeCssUrl: '/webApps/article/css.css' //给编辑区域的iframe引入一个css文件
+        // ,iframeCssUrl: '/webApps/article/css.css' //给编辑区域的iframe引入一个css文件
 
         //indentValue
         //首行缩进距离,默认是2em
         //,indentValue:'2em'
 
         ,initialFrameWidth:'100%'  //初始化编辑器宽度,默认1000
-        // ,initialFrameHeight:640  //初始化编辑器高度,默认320
+        ,initialFrameHeight:480  //初始化编辑器高度,默认320
 
         //,readonly : false //编辑器初始化结束后,编辑区域是否是只读的，默认是false
 
@@ -105,7 +105,7 @@
         //启用自动保存
         ,enableAutoSave: true
         //自动保存间隔时间， 单位ms
-        ,saveInterval: 500
+        ,saveInterval: 5000
 
         //,fullscreen : false //是否开启初始化时即全屏，默认关闭
 
@@ -253,7 +253,7 @@
 
         //elementPathEnabled
         //是否启用元素路径，默认是显示
-        //,elementPathEnabled : true
+        ,elementPathEnabled : false
 
         //wordCount
         //,wordCount:true          //是否开启字数统计
