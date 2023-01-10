@@ -16,6 +16,7 @@ try {
     die();
 }
 ?>
+
 <!--header start-->
 <div class="row bg-title">
     <div class="col-sm-4">
@@ -90,7 +91,7 @@ try {
                         <div id="participantsWrap" data-event-id="<?=$eventId?>" data-max="<?=$row['event_max_participant']?>">
                             <form id="participantsForm" class="hidden">
                                 <input id="deviceId" type="hidden" name="participant_event_id" value="<?=$eventId?>">
-                                <input id="userId" type="hidden" name="participant_user_id" value="<?=$userModel->getCurrentUserId()?>">
+                                <input id="userId" type="hidden" name="participant_user_id" value="">
                                 <input id="userId" type="hidden" name="participant_index" value="">
                             </form>
                         </div>

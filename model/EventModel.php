@@ -84,7 +84,7 @@ class EventModel extends Model
 
         $sql = "SELECT * FROM participant WHERE participant_event_id = ? AND participant_user_id = ?";
         $row = $this->sqltool->getRowBySql($sql,[$eventId,$userId]);
-        $row and Helper::throwException('Can not register multiple times');
+        $row and Helper::throwException('Can not register a user in the same event multiple times');
 
         $sql = "SELECT * FROM  event WHERE event_id = ?";
         $event = $this->sqltool->getRowBySql($sql,[$eventId]);

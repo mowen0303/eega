@@ -374,6 +374,41 @@ $(document).ready(function () {
         copyInventoryBox(firstItemNode,5);
     })
 
+    function registerUserNameInput(){
+        let userNameInput = $("#userNameInput");
+        let userNameInputDatalist = $("#userNameInputDatalist");
+        let timeout = null;
+
+        userNameInput.focus(function(){
+            clearTimeout(timeout);
+            userNameInputDatalist.slideDown();
+        }).focusout(function(){
+            timeout = setTimeout(function(){userNameInputDatalist.slideUp()},200);
+        })
+
+        userNameInput.on('input', function(e) {
+            if($("#userNameSearchErrorBox").not(":animated")){
+                $("#userNameSearchErrorBox").slideUp();
+            }
+            let url = `/restAPI/userController.php?action=searchUser&searchValue=${this.value}&dataType=json`;
+            fetch(url).then(response => response.json()).then(json => {
+                if (json.code === 200) {
+                    let $dataListOption = "";
+                    json.result && json.result.forEach(item => {
+                        $dataListOption += `<div class="valDom" data-user-id="${item.user_id}" data-val="${item.user_name}">${item.user_first_name} ${item.user_last_name} - ${item.user_name}</div>`;
+                    });
+                    userNameInputDatalist.html($dataListOption);
+                    $(".valDom").click(function(event){
+                        event.stopPropagation();
+                        userNameInput.val($(this).attr('data-val')).attr('data-user-id',$(this).attr('data-user-id'))
+                    })
+                }
+            }).catch(error => {
+                alert(error);
+            });
+        });
+    }
+
     function copyInventoryBox(copiedNode,quantity,iniSelectedArr=[],iniQuantityArr=[]){
         const inventoryNode = $("#inventory-box");
         const lastItemCount = parseInt($("#inventory-box .item-box:last-child .num").text()) || 0;
@@ -438,6 +473,7 @@ $(document).ready(function () {
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             credentials: 'same-origin',
         };
+
         fetch(url,options)
             .then(response=>response.json())
             .then(json=>{
@@ -451,55 +487,252 @@ $(document).ready(function () {
                 }
             })
 
-
         $(".participantsBtn").each(function(index){
             $(this).click(function(){
                 let currentBtnDOM = $(this);
                 if(currentBtnDOM.text() == "+"){
-                    $("input[name=participant_index]").val(index);
-                    let url = "/restAPI/eventController.php?action=addParticipantByAdmin&dataType=json";
-                    let options = {
-                        method: "POST",
-                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                        body: $("#participantsForm").serialize(),
-                        credentials: 'same-origin',
-                    };
-                    fetch(url,options)
-                        .then(response=>response.json())
-                        .then(json=>{
-                            if(json.code === 200){
-                                const {result} = json;
-                                const name = `${result.user_first_name} ${result.user_last_name}`;
-                                currentBtnDOM.text(name).attr('data-user-id',result.participant_user_id);
-                            }else{
-                                alert(json.message)
+                    let html =`
+                        <div class="modal-box">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title">Enroll to the event</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div id="userNameSearchErrorBox" class="alert alert-danger" style="display: none"></div>
+                                <table class="table m-b-0">
+                                    <tr>
+                                        <td width="90"><b>User name</b></td>
+                                        <td>
+                                            <div id="userNameSearchWrap">
+                                                <input id="userNameInput" class="form-control" placeholder="User Name" type="text" value="">
+                                                <datalist id="userNameInputDatalist"></datalist>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="enrollConfirmBtn" type="button" class="btn btn-danger"><div class="lds-dual-ring loadingIcon"></div>Enroll</button>
+                            </div>
+                        </div>
+                    `;
+
+                    Swal.fire({
+                        html:html,
+                        width:640,
+                        showConfirmButton: false,
+                    });
+
+                    registerUserNameInput();
+
+                    $("#enrollConfirmBtn").click(function(){
+                        try{
+                            $("input[name=participant_index]").val(index);
+                            $("input[name=participant_user_id]").val($("#userNameInput").attr("data-user-id"));
+                            if(!$("input[name=participant_user_id]").val()){
+                                throw new Error("Please designate a user")
                             }
-                        })
+                            let url = "/restAPI/eventController.php?action=addParticipantByAdmin&dataType=json";
+                            let options = {
+                                method: "POST",
+                                headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                                body: $("#participantsForm").serialize(),
+                                credentials: 'same-origin',
+                            };
+                            fetch(url,options)
+                                .then(response=>response.json())
+                                .then(json=>{
+                                    if(json.code === 200){
+                                        const {result} = json;
+                                        const name = `${result.user_first_name} ${result.user_last_name}`;
+                                        currentBtnDOM.text(name).attr('data-user-id',result.participant_user_id);
+                                        Swal.close();
+                                    }else{
+                                        $("#userNameSearchErrorBox").text(json.message).slideDown();
+                                    }
+                                })
+                        }catch(e){
+                            $("#userNameSearchErrorBox").text(e).slideDown();
+                        }
+
+                    })
+
                 }else{
-                    $("input[name=participant_user_id]").val(currentBtnDOM.attr('data-user-id'));
-                    let url = "/restAPI/eventController.php?action=deleteParticipantByAdmin&dataType=json";
-                    let options = {
-                        method: "POST",
-                        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-                        body: $("#participantsForm").serialize(),
-                        credentials: 'same-origin',
-                    };
-                    fetch(url,options)
-                        .then(response=>response.json())
-                        .then(json=>{
-                            if(json.code === 200){
-                                const {result} = json;
-                                currentBtnDOM.text("+").attr('data-user-id',0);
-                            }else{
-                                alert(json.message)
-                            }
-                        })
+                    let participantName = currentBtnDOM.text();
+                    let html =`
+                        <div class="modal-box">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title">Remove the participant</h3>
+                            </div>
+                            <div class="modal-body">Do you want to remove the participant <b class="text-info">${participantName}</b>?</div>
+                            <div class="modal-footer">
+                                <button id="removeParticipantBtn" type="button" class="btn btn-danger"><div class="lds-dual-ring loadingIcon"></div>Remove</button>
+                            </div>
+                        </div>
+                    `;
+
+                    Swal.fire({
+                        html:html,
+                        width:640,
+                        showConfirmButton: false,
+                    })
+
+                    $("#removeParticipantBtn").click(function(){
+                        $("input[name=participant_user_id]").val(currentBtnDOM.attr('data-user-id'));
+                        let url = "/restAPI/eventController.php?action=deleteParticipantByAdmin&dataType=json";
+                        let options = {
+                            method: "POST",
+                            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+                            body: $("#participantsForm").serialize(),
+                            credentials: 'same-origin',
+                        };
+                        fetch(url,options)
+                            .then(response=>response.json())
+                            .then(json=>{
+                                if(json.code === 200){
+                                    const {result} = json;
+                                    currentBtnDOM.text("+").attr('data-user-id',0);
+                                    Swal.close();
+                                }else{
+                                    alert(json.message)
+                                }
+                            })
+                    })
                 }
+
+                $('.close').click(function(){
+                    Swal.close();
+                })
 
             })
         })
-
-
-
     }
+
+
+    //add participant
+    $("button[data-product-id]").click(function(){
+        let html =`
+        <div class="modal-box">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">ADD PRODUCTS TO MY QUOTATION</h3>
+            </div>
+            <div class="modal-body">
+                <table class="table product-overview">
+                    <thead>
+                    <tr>
+                        <th>Product info</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th style="text-align:center">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td id="cartProductName"></td>
+                        <td id="cartProductPrice"></td>
+                        <td width="100">
+                            <input id="cartProductPriceQuantity" type="number" min="1" class="form-control" value="1">
+                        </td>
+                        <td align="center" width="200"><h4 id="cartProductAmount" ></h4></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table product-overview">
+                    <tr>
+                        <td width="150">Select a quotation</td>
+                        <td id="selectQuotation"></td>
+                    </tr>
+                </table>
+                </div>
+                <div class="modal-footer">
+                <div class="lds-dual-ring"></div>
+                <button id="cartProductAddBtn" type="button" class="btn btn-danger"><div class="lds-dual-ring loadingIcon"></div>Add to quotation</button>
+            </div>
+        </div>
+    `;
+
+        Swal.fire({
+            html:html,
+            width:640,
+            showConfirmButton: false,
+        })
+
+        let name = $(this).attr('data-product-name');
+        let sku = $(this).attr('data-product-sku');
+        let price = Number($(this).attr('data-product-price'));
+        let productId = $(this).attr('data-product-id');
+        let cartId = 0;
+        //$("#cartModal").modal('show');
+
+        $('.close').click(function(){
+            Swal.close();
+        })
+
+        $('#selectQuotation').selectInput(
+            `/restAPI/orderController.php?action=getMyCarts&dataType=json`,
+            `/restAPI/orderController.php?action=addCart&dataType=json`,
+            'Create a new quotation',
+            (v)=>{cartId = v;}
+        );
+
+        $("#cartProductName").html(name);
+        $("#cartProductPrice").html("$"+(price/100).toFixed(2));
+        let quantity = 1;
+        let amount = price * quantity;
+        $("#cartProductAmount").html("$"+(amount/100).toFixed(2));
+        $("#cartProductPriceQuantity").on("keyup change",function(e){
+            quantity = e.target.value >= 1 ? e.target.value : 1;
+            $("#cartProductAmount").html("$"+(price * quantity / 100).toFixed(2));
+            $(this).val(quantity);
+        }).click(function(){
+            $(this).select();
+        });
+        let cartProductAddBtn = $("#cartProductAddBtn");
+        let loadingIcon = cartProductAddBtn.find(".loadingIcon");
+        cartProductAddBtn.click(function(){
+
+            if(!cartId){
+                showAlert('Please create/select a quotation!','error');
+                return false;
+            }
+
+            cartProductAddBtn.attr('disabled',true);
+            loadingIcon.css({'display':'inline-block'});
+            let params = new URLSearchParams();
+            params.append('order_id', cartId);
+            params.append('product_id', productId);
+            params.append('product_count', quantity);
+
+            axios.post('/restAPI/orderController.php?action=modifyOrderProduct&dataType=json',params)
+                .then(function (response) {
+                    if(response.data.code == 200){
+                        Swal.fire({
+                            position: 'center',
+                            type: 'success',
+                            title:'Success',
+                            text: response.data.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }else if(response.data.message){
+                        Swal.fire('Oops...', response.data.message, 'error');
+                    }else{
+                        Swal.fire('Oops...', 'There is an unknown error occur in the API', 'error');
+                    }
+                })
+                .catch(function (error) {
+                    Swal.fire('Oops...', 'There are some errors of API', 'error');
+                })
+                .then(function () {
+                    // always executed
+                    cartProductAddBtn.attr('disabled',false);
+                    loadingIcon.hide();
+                });
+
+        })
+    })
+
+
 });
