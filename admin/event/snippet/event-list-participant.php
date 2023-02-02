@@ -37,12 +37,12 @@ try {
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12">
 
-                        <h4 class="box-title m-t-40">Localtion information</h4>
+                        <h4 class="box-title m-t-40">COURSE information</h4>
                         <div class="table-responsive">
                             <table class="table">
                                 <tbody>
                                     <tr>
-                                        <td width="150">Name</td>
+                                        <td width="150">Course</td>
                                         <td> <?=$place->name?> </td>
                                     </tr>
                                     <?php
@@ -83,9 +83,7 @@ try {
 
 
                         <h4 class="box-title m-t-40">Description</h4>
-                        <div>
-                            <?=$row['event_description']?>
-                        </div>
+                        <div><pre style="font-family: 'Rubik', sans-serif; font-size: 14px; color: #797979; border: none; padding: 0; line-height: 1.5em"><?=$row['event_description']?></pre></div>
 
                         <h4 class="box-title m-t-40">Participants</h4>
                         <div id="participantsWrap" data-event-id="<?=$eventId?>" data-max="<?=$row['event_max_participant']?>">
