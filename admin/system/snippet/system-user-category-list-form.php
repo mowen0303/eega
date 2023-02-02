@@ -9,7 +9,7 @@ try {
     $flag = $row?'Edit':'Add';
     $authority = $row ? json_decode($row['user_category_authority'], true) : null;
 } catch (Exception $e) {
-    Helper::echoJson($e->getCode(), $e->getMessage(),null,null,null,'/adminPSCMS/user/index.php?s=listCategory');
+    Helper::echoJson($e->getCode(), $e->getMessage(),null,null,null,'/admin/user/index.php?s=listCategory');
     die();
 }
 ?>

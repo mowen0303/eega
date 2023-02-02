@@ -95,6 +95,48 @@ table h3 {margin-bottom: 0}
 .swal2-popup .swal2-styled.swal2-confirm,.swal2-popup .swal2-styled.swal2-cancel {font-size: 13px;margin:10px 5px 10px 5px}
 .select2-container .select2-dropdown {z-index: 999999 !important;}
 
+
+.participantsBtnWrap .participantsBtnRow {
+    position:relative;
+    padding-bottom: 1em;
+    overflow: auto;
+}
+.participantsBtnWrap .participantsBtn {
+    float: left;;
+    width: calc(25% - 10px);
+    margin:0 3px;
+    height: 40px;
+    line-height: 40px;
+    border:1px dashed #ccc;
+    text-align: center;
+    color: #ccc;
+    cursor:pointer;
+    background: #fafafa;
+    transition-duration: 0.5s;
+}
+
+.participantsBtnWrap .participantsBtn:hover {
+    border-color: #2cabe3;
+    color:#2cabe3;
+    background: #cbeffd;
+
+}
+
+#customModel {position: fixed; top:0;right:0;bottom:0;left:0;background: rgba(0,0,0,0.5);z-index: 9999;display: none}
+#scheduleBox {display:flex;flex-direction: row;}
+#scheduleFormBox,#cancelScheduleFormBox {position:fixed; width:60%; top:150px;background: #fff; left: 50%; transform:translateX(-50%); z-index: 999; box-shadow: 0px 0px 5px rgba(0,0,0,0.3); border-radius: 6px;display: none; overflow: hidden}
+#scheduleClose {position: absolute; top:8px;right:10px;padding:20px; cursor:pointer}
+#cancelScheduleForm,#scheduleForm {padding:20px 80px 10px 40px;}
+#courseCodeList { display:none;position: absolute; max-height:200px; overflow-y: scroll;z-index: 999;background: #fff;border:1px solid #ccc; left:15px; right:15px;}
+#courseCodeList div {padding:5px 10px;cursor: pointer; transition: background-color 0.5s}
+#courseCodeList div:hover {background: rgba(0, 175, 240, 0.2);}
+
+#userNameSearchWrap {position: relative}
+#userNameInputDatalist {position: absolute; background: #fff; border:1px solid #ccc; left: 0;right:0; max-height: 200px}
+#userNameInputDatalist div {padding: 5px 10px;cursor: pointer;transition: background-color 0.5s;}
+#userNameInputDatalist div:hover {background: #eee}
+
+
 @media print {
     a[href]:after {
         content: none !important;

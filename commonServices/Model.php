@@ -154,7 +154,7 @@ abstract class Model {
      * @return int          输数据所受影响的行数
      * @throws Exception
      */
-    protected function updateRowById($table, $id, $arrKV, bool $isThrowExceptionOnNoAffectedRows = true) {
+    protected function updateRowById($table, $id, $arrKV, bool $isThrowExceptionOnNoAffectedRows = true, $pkName = null) {
         $field = "";
         $valueArr = [];
         foreach ($arrKV as $k => $v) {
@@ -163,7 +163,11 @@ abstract class Model {
         }
         $valueArr[] = $id;
         $field = substr($field, 0, -1);
-        $sql = "update {$table} set {$field} where {$table}_id in (?)";
+        if($pkName){
+            $sql = "update {$table} set {$field} where {$pkName} in (?)";
+        }else{
+            $sql = "update {$table} set {$field} where {$table}_id in (?)";
+        }
         $this->sqltool->query($sql, $valueArr);
         if ($isThrowExceptionOnNoAffectedRows == true) {
             $this->sqltool->affectedRows > 0 or Helper::throwException("No data has been effected",400);

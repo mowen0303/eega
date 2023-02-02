@@ -22,7 +22,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>WoodWorth WLINK System</title>
+    <title><?=WEBSITE_NAME?> Admin System</title>
     <link href="/admin/resource/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/admin/resource/css/animate.css" rel="stylesheet">
     <link href="/admin/resource/css/style.css" rel="stylesheet">
@@ -54,6 +54,10 @@ try {
     <script src="/admin/resource/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
     <script src="/admin/resource/js/jquery.PrintArea.js" type="text/JavaScript"></script>
     <script type="text/javascript" src="/admin/resource/plugins/bower_components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+    <script src="/admin/resource/plugins/bower_components/jquery-asColorPicker-master/dist/jquery-asColorPicker.min.js"></script>
+    <link href="/admin/resource/plugins/bower_components/jquery-asColorPicker-master/dist/css/asColorPicker.css" rel="stylesheet">
+    <script src="/admin/resource/plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <link href="/admin/resource/plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
 
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -128,8 +132,9 @@ try {
 <!--                    <li><a href="/admin/adminIndex.php" class="waves-effect"><i class="mdi mdi-av-timer fa-fw"></i> <span class="hide-menu">Dashboard</span></a></li>-->
 
 
-                    <li class="devider"></li>
-
+                    <li><a href="/admin/rank/index.php?s=rank-list" class="waves-effect"><i class="mdi mdi-trophy fa-fw"></i> <span class="hide-menu">Rank<span class="fa arrow"></span></span></a></li>
+                    <li><a href="/admin/event/index.php?s=event-list" class="waves-effect"><i class="mdi mdi-airballoon fa-fw"></i> <span class="hide-menu">Event<span class="fa arrow"></span></span></a></li>
+                    <li><a href="/admin/sponsor/index.php?s=sponsor-page" class="waves-effect"><i class="mdi mdi-octagram fa-fw"></i> <span class="hide-menu">Sponsor<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/user/index.php?s=user-list" class="waves-effect"><i class="mdi mdi-account-circle  fa-fw"></i> <span class="hide-menu">User<span class="fa arrow"></span></span></a></li>
 
                     <?php if($userModel->isCurrentUserHasAnyOneOfAuthorities([

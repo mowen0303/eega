@@ -1,6 +1,6 @@
 </div>
 <!-- /.container-fluid -->
-<footer class="footer text-center"> 2023 &copy; V-TEC (v0.0.1)</footer>
+<footer class="footer text-center"> 2023 &copy; V-TEC (v1.0.0)</footer>
 </div>
 <!-- ============================================================== -->
 <!-- End Page Content -->
@@ -42,6 +42,13 @@
             };
             $(this).parents(".printableArea").printArea(options);
         })
+    });
+    // Date Picker
+    jQuery('#datepicker-autoclose').datepicker({
+        autoclose: true,
+        todayHighlight: true,
+        format: 'yyyy-mm-dd',
+        orientation: 'bottom',
     });
 </script>
 </body>

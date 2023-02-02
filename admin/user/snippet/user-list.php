@@ -2,16 +2,6 @@
 try {
     global $userModel;
     $userArr = $userModel->getUsers([0],$_GET);
-    $type = $_GET['type'];
-    switch ($type){
-        case 'internal':
-            $type = 'internal user';
-            break;
-        case 'external':
-            $type = 'external user';
-            break;
-        default: $type = 'all user';
-    }
     $userCategoryArr = $userModel->getUserCategories();
 } catch (Exception $e) {
     Helper::echoJson($e->getCode(),$e->getMessage());
@@ -21,7 +11,7 @@ try {
 <!--header start-->
 <div class="row bg-title">
     <div class="col-sm-4">
-        <h4 class="page-title">User / <?=$type?></h4>
+        <h4 class="page-title">User</h4>
     </div>
     <label class="col-sm-8 control-label">
         <?php Helper::echoBackBtn(1);?>
