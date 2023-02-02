@@ -322,7 +322,9 @@ class UserModel extends Model
             $arr['user_avatar'] = $this->defaultAvatar;
             $arr['user_name'] = Helper::post('user_name','User name can not be null',4);
             $arr['user_pwd'] = md5(Helper::post('user_pwd','Password can not be null',6));
+            $arr['user_pin'] = "TEMPIN";
             $id = $this->addRow('user', $arr);
+            $this->generatePIN($id);
         }
         //上传图片
         $oldImg = $this->getProfileOfUserById($id)['user_avatar'];

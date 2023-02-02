@@ -150,7 +150,8 @@ class EventModel extends Model
         $participantInsert['participant_handicap_differential'] = $handicapDifferential;
 
         //计算index
-        $sql = "SELECT * FROM participant WHERE participant_user_id = ? AND participant_date < ? ORDER BY participant_handicap_differential ASC LIMIT 0,40";
+        $sql = "SELECT t.* FROM (SELECT * FROM participant WHERE participant_handicap_differential IS NOT NULL ORDER BY participant_date DESC LIMIT 0,6) AS t WHERE 1 ORDER BY t.participant_handicap_differential ASC";
+        $sql = "SELECT * FROM participant WHERE participant_user_id = ? AND participant_date < ? AND participant_handicap_differential IS NOT NULL ORDER BY participant_handicap_differential ASC LIMIT 0,40";
         $participantArr = $this->sqltool->getListBySql($sql,[$userId,$event['event_date']]);
         $participantArrLength = count($participantArr);
         if($participantArrLength >= 4){
