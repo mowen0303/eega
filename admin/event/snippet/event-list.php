@@ -30,7 +30,7 @@ try {
                     <h3 class="box-title m-b-0">Event List</h3>
                 </div>
             </div>
-            <form action="/restAPI/userController.php?action=deleteUserByIds" method="post">
+            <form action="/restAPI/eventController.php?action=deleteEventByIds" method="post">
                 <div class="table-responsive">
                     <table class="table orderTable color-table dark-table table-hover">
                         <thead>
@@ -58,9 +58,10 @@ try {
                                 <td><?=$place_arr[$row['event_location_id']]->name?></td>
                                 <td><?=$row['event_max_participant']?></td>
                                 <td>
-                                    <a href="/admin/event/index.php?s=event-list-form&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit event"><i class="ti-marker-alt"></i></a>
-                                    <a href="/admin/event/index.php?s=event-list-participant&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Manage participant"><i class="ti-user"></i></a>
-                                    <a href="/admin/event/index.php?s=event-list-review-form&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit review"><i class="ti-comment-alt"></i></a>
+                                    <a href="/admin/event/index.php?s=event-list-form&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
+                                    <a href="/admin/event/index.php?s=event-list-participant&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Participant"><i class="ti-user"></i></a>
+                                    <a href="/admin/event/index.php?s=event-list-score&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Score"><i class="ti-cup"></i></a>
+                                    <a href="/admin/event/index.php?s=event-list-review-form&eventId=<?=$row['event_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Review"><i class="ti-comment-alt"></i></a>
                                 </td>
                             </tr>
                             <?php

@@ -1,6 +1,6 @@
 </div>
 <!-- /.container-fluid -->
-<footer class="footer text-center"> 2023 &copy; V-TEC (v0.0.1)</footer>
+<footer class="footer text-center"> 2023 &copy; V-TEC (v1.0.0)</footer>
 </div>
 <!-- ============================================================== -->
 <!-- End Page Content -->

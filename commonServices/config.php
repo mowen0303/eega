@@ -1,5 +1,9 @@
 <?php
-require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/serverKey.php";
+if($_SERVER['SERVER_NAME'] === "localhost"){
+    require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/localhostKey.php";
+}else{
+    require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/serverKey.php";
+}
 session_start();
 @header("Content-type:text/html; charset=utf-8");
 @header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
@@ -14,6 +18,8 @@ const USER_PK = 'pss';
 const UPLOAD_FOLDER = "/upload";
 const NO_IMG = "/admin/resource/img/noimg.png";
 const SETTING_JSON = "/commonServices/manualSetting.json";
+$place_json = file_get_contents($_SERVER['DOCUMENT_ROOT'] . "/resource/json/place.json");
+$place_arr = json_decode($place_json);
 require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/SqlTool.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/Helper.php";
 require_once $_SERVER['DOCUMENT_ROOT']."/commonServices/Model.php";
@@ -22,6 +28,5 @@ spl_autoload_register(function($name){$name = str_replace("\\","/",$name);includ
 call_user_func(@$_GET['action']);
 
 const WEBSITE_NAME = "EEGA";
-$place_json = file_get_contents($_SERVER['DOCUMENT_ROOT'] . "/resource/json/place.json");
-$place_arr = json_decode($place_json);
+
 ?>

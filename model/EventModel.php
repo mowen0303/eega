@@ -55,7 +55,7 @@ class EventModel extends Model
 
     public function modifyEventReview($id=0){
         $arr = [];
-        $arr['event_review_title'] = Helper::post('event_review_title','Event review title can not be null',0,255);
+        //$arr['event_review_title'] = Helper::post('event_review_title','Event review title can not be null',0,255);
         $arr['event_review_content'] = $_POST['event_review_content'];
         $event = $this->getEvents([$id])[0];
         if($event){
@@ -67,7 +67,7 @@ class EventModel extends Model
     }
 
     public function getParticipants($eventId){
-        $sql = "SELECT participant.*,user_first_name,user_last_name FROM participant LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id = ?";
+        $sql = "SELECT participant.*,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id = ?";
         $result = $this->sqltool->getListBySql($sql,[$eventId]);
         return $result;
     }
@@ -112,6 +112,73 @@ class EventModel extends Model
         $this->sqltool->query($sql,[$eventId,$userId]);
         return $this->sqltool->affectedRows;
     }
+
+    public function deleteEventByIds(){
+        $eventIds = Helper::request('id',"Id can no be null");
+        if(!is_array($eventIds)) $userIds = [$eventIds];
+        $deletedRows = $this->deleteByIDsReally('event', $eventIds);
+        return $deletedRows;
+    }
+
+    public function updateScore(){
+        $id = Helper::post("participant_id");
+        $score = Helper::post("participant_score",'Score is required');
+        $t = Helper::post("participant_t",'Please select T type');
+        $sql = "SELECT * FROM participant WHERE participant_id = ?";
+        $participantRow = $this->sqltool->getRowBySql($sql,[$id]);
+        $userId = $participantRow['participant_user_id'];
+
+        $eventId = $participantRow['participant_event_id'];
+        $sql = "SELECT * FROM event WHERE event_id = ?";
+        $event = $this->sqltool->getRowBySql($sql,[$eventId]);
+        $eventLocationId = $event['event_location_id'];
+
+
+        global $place_arr;
+        $place = $place_arr[$eventLocationId];
+
+        $rating = $place->{$t}->rating;
+        $slope = $place->{$t}->slope;
+        $par = $place->{$t}->par;
+
+        $handicapDifferential = round(($score - $rating) * 113 / $slope, 1);
+
+        $participantInsert = [];
+        $participantInsert['participant_score'] = $score;
+        $participantInsert['participant_t'] = $t;
+        $participantInsert['participant_date'] = $event['event_date'];
+        $participantInsert['participant_handicap_differential'] = $handicapDifferential;
+
+        //计算index
+        $sql = "SELECT * FROM participant WHERE participant_user_id = ? AND participant_date < ? ORDER BY participant_handicap_differential ASC LIMIT 0,40";
+        $participantArr = $this->sqltool->getListBySql($sql,[$userId,$event['event_date']]);
+        $participantArrLength = count($participantArr);
+        if($participantArrLength >= 4){
+            $validateCount = floor($participantArrLength/2);
+            $differential = 0;
+            for($i = 0; $i < $validateCount; $i ++){
+                $differential += $participantArr[$i]['participant_handicap_differential'];
+            }
+            $participantInsert['participant_handicap_index'] = round($differential / $validateCount * 0.96,1);
+            $participantInsert['participant_net_score'] = round($score - ($participantInsert['participant_handicap_index'] * $slope / 113 + ($rating - $par)));
+        }else{
+            $participantInsert['participant_handicap_index'] = NULL;
+            $participantInsert['participant_net_score'] = NULL;
+        }
+
+        $this->updateRowById('participant',$id,$participantInsert,false);
+
+        $rankModel = new RankModel();
+        $rankModel->updateRank($userId);
+
+        $sql = "SELECT * FROM participant WHERE participant_id = ?";
+        $result = $this->sqltool->getRowBySql($sql,[$id]);
+        $result['rating'] = $rating;
+        $result['slope'] = $slope;
+        $result['par'] = $par;
+        return $result;
+    }
+
 
 }
 
