@@ -2,9 +2,9 @@
 try {
     global $userModel;
     global $place_arr;
-    $userId = Helper::get("userId","user id is required");
-    $rankModel = new \model\RankModel();
-    $rankHistoryArr = $rankModel->getRankHistory($userId);
+    $userId = Helper::get("uid","user id is required");
+    $eventModel = new \model\EventModel();
+    $rankHistoryArr = $eventModel->getAllParticipants($userId);
     $rankValue = 1;
 } catch (Exception $e) {
     Helper::echoJson(0, $e->getMessage());
@@ -17,7 +17,7 @@ try {
         <h4 class="page-title">EVENT / SCORE </h4>
     </div>
     <label class="col-sm-8 control-label">
-        <a href="/admin/rank/index.php?s=rank-list" class="btn btn-info pull-right m-l-10">Back</a>
+        <?php Helper::echoBackBtn(2);?>
     </label>
 </div>
 <!--header end-->

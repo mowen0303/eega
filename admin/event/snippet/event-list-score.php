@@ -24,7 +24,7 @@ try {
         <h4 class="page-title">EVENT / SCORE </h4>
     </div>
     <label class="col-sm-8 control-label">
-        <a href="/admin/event/index.php?s=event-list" class="btn btn-info pull-right m-l-10">Back</a>
+        <?php Helper::echoBackBtn(2);?>
     </label>
 </div>
 <!--header end-->
@@ -63,7 +63,7 @@ try {
                                 <td><span class="participantT"><?=$row['participant_t']?></span> (<span class="tR"><?=$place->{$row['participant_t']}->rating ?></span>/<span class="tS"><?=$place->{$row['participant_t']}->slope?></span>/<span class="tP"><?=$place->{$row['participant_t']}->par?></span>)</td>
                                 <td><span class="participantScore"><?=$row['participant_score'] ?></span></td>
                                 <td><span class="handicapDifferential"><?=$row['participant_handicap_differential'] ?></span></td>
-                                <td><span class="participantIndex"><?=$row['participant_handicap_index'] ?></span></td>
+                                <td><a href="/admin/event/index.php?s=event-list-participant-history&participantId=<?=$row['participant_id'] ?>"><span class="participantIndex"><?=$row['participant_handicap_index'] ?></span></a></td>
                                 <td><span class="participantNetScore"><?=$row['participant_net_score'] ?></span></td>
                                 <td><span class="participantDate"><?=$row['participant_date'] ?></span></td>
                                 <td><div class="editScoreBtn" style="cursor:pointer;width: 40px; text-align: center" data-participant-id="<?=$row['participant_id']?>"><i class="ti-marker-alt"></i></div></td>

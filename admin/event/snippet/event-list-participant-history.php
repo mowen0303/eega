@@ -2,9 +2,9 @@
 try {
     global $userModel;
     global $place_arr;
-    $userId = Helper::get("userId","user id is required");
-    $rankModel = new \model\RankModel();
-    $rankHistoryArr = $rankModel->getRankHistory($userId);
+    $participantId = Helper::get("participantId","participant Id is required");
+    $eventModel = new \model\EventModel();
+    $rankHistoryArr = $eventModel->getParticipantHistory($participantId);
     $rankValue = 1;
 } catch (Exception $e) {
     Helper::echoJson(0, $e->getMessage());
@@ -17,7 +17,7 @@ try {
         <h4 class="page-title">EVENT / SCORE </h4>
     </div>
     <label class="col-sm-8 control-label">
-        <a href="/admin/rank/index.php?s=rank-list" class="btn btn-info pull-right m-l-10">Back</a>
+        <?php Helper::echoBackBtn(3);?>
     </label>
 </div>
 <!--header end-->
@@ -57,7 +57,7 @@ try {
                                 <td><span class="participantT"><?=$row['participant_t']?></span> (<span class="tR"><?=$place->{$row['participant_t']}->rating ?></span>/<span class="tS"><?=$place->{$row['participant_t']}->slope?></span>/<span class="tP"><?=$place->{$row['participant_t']}->par?></span>)</td>
                                 <td><?=$row['participant_score'] ?></td>
                                 <td><?php
-                                    if($row['rank_history_is_used_for_calculate']==1){
+                                    if($row['participant_history_is_used_for_calculate']==1){
                                         echo '<span class="label label-success">Valid</span>';
                                     }
                                     ?></td>

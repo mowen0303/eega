@@ -87,6 +87,7 @@ try {
                             <th>Phone</th>
                             <th>GROUP</th>
                             <th><a <?=$userModel->getUserListOrderUrl('lastLoginTime')?>>LAST LOGIN TIME</a></th>
+                            <th>SCORE HISTORY</th>
                             <th width="70"></th>
                         </tr>
                         </thead>
@@ -108,6 +109,9 @@ try {
                                 <td><?=$row['user_phone']?></td>
                                 <td><span class="label label-success"><?=$row['user_category_title']?></span></td>
                                 <td data-hl-orderby="lastLoginTime"><?=$row['user_last_login_time']?></td>
+                                <td>
+                                    <a href="/admin/user/index.php?s=user-list-score-history&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title=""><i class="ti-flag-alt"></i></a>
+                                </td>
                                 <td>
                                     <a href="/admin/user/index.php?s=user-list-form&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Edit"><i class="ti-marker-alt"></i></a>
                                     <a href="/admin/user/index.php?s=user-list-pwd-form&uid=<?=$row['user_id']?>" class="text-inverse p-r-10" data-toggle="tooltip" title="" data-original-title="Change Password"><i class="ti-key"></i></a>

@@ -150,16 +150,30 @@ class EventModel extends Model
         $participantInsert['participant_handicap_differential'] = $handicapDifferential;
 
         //计算index
-        $sql = "SELECT t.* FROM (SELECT * FROM participant WHERE participant_handicap_differential IS NOT NULL ORDER BY participant_date DESC LIMIT 0,6) AS t WHERE 1 ORDER BY t.participant_handicap_differential ASC";
-        $sql = "SELECT * FROM participant WHERE participant_user_id = ? AND participant_date < ? AND participant_handicap_differential IS NOT NULL ORDER BY participant_handicap_differential ASC LIMIT 0,40";
+        $sql = "SELECT t.* FROM (SELECT * FROM participant WHERE participant_user_id = ? AND participant_handicap_differential IS NOT NULL AND participant_date < ? ORDER BY participant_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
         $participantArr = $this->sqltool->getListBySql($sql,[$userId,$event['event_date']]);
         $participantArrLength = count($participantArr);
+
+        $sql = "DELETE FROM participant_history WHERE participant_history_calculate_for_participant_id = ?";
+        $this->sqltool->query($sql,[$id]);
+
         if($participantArrLength >= 4){
             $validateCount = floor($participantArrLength/2);
+
+            $sql = "";
             $differential = 0;
-            for($i = 0; $i < $validateCount; $i ++){
-                $differential += $participantArr[$i]['participant_handicap_differential'];
+            for($i = 0; $i < $participantArrLength; $i ++){
+                $participantId = $participantArr[$i]['participant_id'];
+                if($i < $validateCount){
+                    $differential += $participantArr[$i]['participant_handicap_differential'];
+                    $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,1);";
+                }else{
+                    $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,0);";
+                }
             }
+            $this->sqltool->mysqli->multi_query($sql);
+            while ($this->sqltool->mysqli->next_result()) {;}
+
             $participantInsert['participant_handicap_index'] = round($differential / $validateCount * 0.96,1);
             $participantInsert['participant_net_score'] = round($score - ($participantInsert['participant_handicap_index'] * $slope / 113 + ($rating - $par)));
         }else{
@@ -178,6 +192,16 @@ class EventModel extends Model
         $result['slope'] = $slope;
         $result['par'] = $par;
         return $result;
+    }
+
+    public function getParticipantHistory($participantId){
+        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM participant_history LEFT JOIN participant ON participant_history_participant_id = participant_id LEFT JOIN user ON participant_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE participant_history_calculate_for_participant_id = ?  ORDER BY participant_date DESC";
+        return $this->sqltool->getListBySql($sql,[$participantId]);
+    }
+
+    public function getAllParticipants($userId){
+        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM participant LEFT JOIN user ON participant_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND participant_score IS NOT NULL ORDER BY participant_date DESC";
+        return $this->sqltool->getListBySql($sql,[$userId]);
     }
 
 
