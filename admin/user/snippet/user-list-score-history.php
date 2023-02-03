@@ -14,7 +14,7 @@ try {
 <!--header start-->
 <div class="row bg-title">
     <div class="col-sm-4">
-        <h4 class="page-title">EVENT / SCORE </h4>
+        <h4 class="page-title">USER / SCORE </h4>
     </div>
     <label class="col-sm-8 control-label">
         <?php Helper::echoBackBtn(2);?>
@@ -26,7 +26,7 @@ try {
         <div class="white-box">
             <div class="row m-b-20">
                 <div class="col-sm-12">
-                    <h3 class="box-title m-b-0">SCORE HISTORY - LAST 20 GAMES</h3>
+                    <h3 class="box-title m-b-0">ALL SCORE HISTORY</h3>
                 </div>
             </div>
                 <div class="table-responsive">
