@@ -34,9 +34,7 @@ try {
                     <div class="col-sm-2">
                         <button class="btn btn-block btn-info waves-effect waves-light" type="submit">Search</button>
                     </div>
-                    <?
-                    var_dump($_GET['searchValue']);
-                    die();
+                    <?php
                     if($_GET['searchValue']){
                     ?>
                         <div class="col-sm-2">
