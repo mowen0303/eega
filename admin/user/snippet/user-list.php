@@ -40,7 +40,9 @@ try {
                         <div class="col-sm-2">
                             <a href="/admin/user/index.php?s=user-list&type=all" class="btn btn-block btn-danger waves-effect waves-light" type="submit">Clear</a>
                         </div>
-                    <?}?>
+                    <?php
+                    }
+                    ?>
                 </div>
             </form>
         </div>
