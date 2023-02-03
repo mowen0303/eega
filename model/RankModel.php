@@ -64,7 +64,7 @@ class RankModel extends Model
         if ($orderBy) {
             $orderCondition = "{$orderBy} {$sequence},";
         }
-        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank LEFT JOIN user ON rank_user_id = user_id WHERE true {$whereCondition} ORDER BY {$orderCondition} rank_handicap_index DESC";
+        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank LEFT JOIN user ON rank_user_id = user_id WHERE true {$whereCondition} ORDER BY {$orderCondition} rank_handicap_index ASC";
         return $this->sqltool->getListBySql($sql,$bindParams);
     }
 
