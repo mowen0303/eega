@@ -40,26 +40,29 @@ try {
                     <table class="table orderTable color-table dark-table table-hover">
                         <thead>
                         <tr>
-                            <th width="100" class="p-l-20">SEAT</th>
-                            <th width="150">AVATAR</th>
-                            <th width="300">Name</th>
+                            <th width="30" class="p-l-20">#</th>
+                            <th>AVATAR</th>
+                            <th>Name</th>
+                            <th>SEAT</th>
                             <th>T TYPE (S/R/P)</th>
-                            <th>GROSS SCORE</th>
-                            <th>DIFFERENTIAL</th>
-                            <th>INDEX</th>
-                            <th>NET SCORE</th>
+                            <th><a <?=$eventModel->getScoreListOrderUrl($eventId,'participant_score')?>>GROSS SCORE</a></th>
+                            <th><a <?=$eventModel->getScoreListOrderUrl($eventId,'participant_handicap_differential')?>>DIFFERENTIAL</a></th>
+                            <th><a <?=$eventModel->getScoreListOrderUrl($eventId,'participant_handicap_index')?>>INDEX</a></th>
+                            <th><a <?=$eventModel->getScoreListOrderUrl($eventId,'participant_net_score')?>>NET SCORE</a></th>
                             <th>DATE</th>
                             <th width="70"></th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php
+                        $index = 1;
                         foreach ($participants as $row) {
                             ?>
                             <tr>
-                                <td class="p-l-30"><?=$row['participant_index']+1?></td>
+                                <td class="p-l-20"><?=$index++?></td>
                                 <td><div class="avatar avatar-40" style="background-image: url('<?=$row['user_avatar']?>')"></td>
                                 <td><?=$row['user_first_name'] ?> <?=$row['user_last_name'] ?></td>
+                                <td><?=$row['participant_index']+1?></td>
                                 <td><span class="participantT"><?=$row['participant_t']?></span> (<span class="tR"><?=$place->{$row['participant_t']}->rating ?></span>/<span class="tS"><?=$place->{$row['participant_t']}->slope?></span>/<span class="tP"><?=$place->{$row['participant_t']}->par?></span>)</td>
                                 <td><span class="participantScore"><?=$row['participant_score'] ?></span></td>
                                 <td><span class="handicapDifferential"><?=$row['participant_handicap_differential'] ?></span></td>

@@ -67,8 +67,21 @@ class EventModel extends Model
     }
 
     public function getParticipants($eventId){
-        $sql = "SELECT participant.*,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id = ?";
-        $result = $this->sqltool->getListBySql($sql,[$eventId]);
+
+        $bindParams = [];
+        $selectFields = "";
+        $whereCondition = "";
+        $orderCondition = "";
+
+        $orderBy    = $_GET['orderBy'];
+        $sequence   = $_GET['sort']?:'DESC';
+
+        if ($orderBy) {
+            $orderCondition = "{$orderBy} {$sequence},";
+        }
+
+        $sql = "SELECT participant.*,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id IN ($eventId) ORDER BY {$orderCondition} participant_id DESC";
+        $result = $this->sqltool->getListBySql($sql,null);
         return $result;
     }
 
@@ -202,6 +215,17 @@ class EventModel extends Model
     public function getAllParticipants($userId){
         $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM participant LEFT JOIN user ON participant_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND participant_score IS NOT NULL ORDER BY participant_date DESC";
         return $this->sqltool->getListBySql($sql,[$userId]);
+    }
+
+    function getScoreListOrderUrl($eventId,$orderBy){
+        $sort = $_GET['sort'];
+        $urlOrderBy = $_GET['orderBy'];
+        if($urlOrderBy == $orderBy){
+            $sort = $sort=="asc"?"desc":"asc";
+        }else{
+            $sort = "desc";
+        }
+        return " href='/admin/event/index.php?s=event-list-score&eventId={$eventId}&orderBy={$orderBy}&sort={$sort}' data-hl-orderby='{$orderBy}' ";
     }
 
 
