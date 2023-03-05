@@ -64,7 +64,20 @@ class UserModel extends Model
         foreach ($arr as $k => $v) {
             setcookie($k, $v, $time, '/');
         }
-        return $row;
+        return $arr;
+    }
+
+    public function isLogin() {
+        if (@$_COOKIE['cc_id']) {
+            $cc = md5($_COOKIE['cc_id'] . $_COOKIE['cc_uc'] . $_COOKIE['cc_na'] . $_COOKIE['cc_ul'] . USER_PK);
+            if($cc == $_COOKIE['cc_cc']){
+                return $_COOKIE;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
     }
 
     /**

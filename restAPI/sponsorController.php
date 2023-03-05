@@ -1,6 +1,16 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . "/commonServices/config.php";
 
+function getSponsor() {
+    try {
+        $userModel = new \model\UserModel();
+        $sponsorModel = new \model\SponsorModel();
+        $row =  $sponsorModel->modifySponsorById(1);
+        Helper::echoJson(200, "Success", $row);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
 
 function modifySponsor() {
     try {

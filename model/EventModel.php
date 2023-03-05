@@ -47,10 +47,52 @@ class EventModel extends Model
         }
         $sql = "SELECT * FROM event WHERE true {$whereCondition} ORDER BY {$orderCondition} event_id DESC";
         if(array_sum($id)!=0){
-            return $this->sqltool->getListBySql($sql,$bindParams);
+            $result = $this->sqltool->getListBySql($sql,$bindParams);
         }else{
-            return $this->getListWithPage('event',$sql,$bindParams,$pageSize);
+            $result = $this->getListWithPage('event',$sql,$bindParams,$pageSize);
         }
+
+        global $place_arr;
+        foreach($result as $k => $v){
+            $place = $place_arr[$v['event_location_id']];
+            $result[$k]['courseName'] = $place->name;
+            if($place->red){
+                $result[$k]['t_red'] = [
+                    'rating'=>$place->red->rating,
+                    'slope'=>$place->red->slope,
+                    'par'=>$place->red->par
+                ];
+            }
+            if($place->green){
+                $result[$k]['t_green'] = [
+                    'rating'=>$place->green->rating,
+                    'slope'=>$place->green->slope,
+                    'par'=>$place->green->par
+                ];
+            }
+            if($place->white){
+                $result[$k]['t_white'] = [
+                    'rating'=>$place->white->rating,
+                    'slope'=>$place->white->slope,
+                    'par'=>$place->white->par
+                ];
+            }
+            if($place->blue){
+                $result[$k]['t_blue'] = [
+                    'rating'=>$place->blue->rating,
+                    'slope'=>$place->blue->slope,
+                    'par'=>$place->blue->par
+                ];
+            }
+            if($place->black){
+                $result[$k]['t_black'] = [
+                    'rating'=>$place->black->rating,
+                    'slope'=>$place->black->slope,
+                    'par'=>$place->black->par
+                ];
+            }
+        }
+        return $result;
     }
 
     public function modifyEventReview($id=0){
@@ -80,30 +122,49 @@ class EventModel extends Model
             $orderCondition = "{$orderBy} {$sequence},";
         }
 
-        $sql = "SELECT participant.*,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id IN ($eventId) ORDER BY {$orderCondition} participant_id DESC";
+        if($orderBy == "participant_net_score"){
+            $orderCondition = "(case when participant_net_score is null then 1 else 0 end) asc, participant_net_score {$sequence},";
+        }
+
+        $sql = "SELECT participant.*,event.event_location_id,event.event_title,event.event_date,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN event ON participant_event_id = event_id LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id IN ($eventId) ORDER BY {$orderCondition} participant_id DESC";
         $result = $this->sqltool->getListBySql($sql,null);
+        global $place_arr;
+        foreach($result as $k => $v){
+            $place = $place_arr[$v['event_location_id']];
+            $result[$k]['courseName'] = $place->name;
+            $result[$k]['tr'] = $place->{$v['participant_t']}->rating;
+            $result[$k]['ts'] = $place->{$v['participant_t']}->slope;
+            $result[$k]['tp'] = $place->{$v['participant_t']}->par;
+        }
         return $result;
     }
 
-    public function addParticipant(){
+    public function addParticipant($eventId,$userId,$index,$restrictDate = false){
 
-        $eventId = Helper::post('participant_event_id','missing event id');
-        $userId = Helper::post('participant_user_id','missing user id');
-        $index = Helper::post('participant_index','missing index');
+        $sql = "SELECT * FROM  event WHERE event_id = ?";
+        $event = $this->sqltool->getRowBySql($sql,[$eventId]);
+        $event or Helper::throwException('Event do not exist');
 
+        if($index < 0 || $index >$event['event_max_participant']){
+            Helper::throwException('Index is incorrect');
+        }
+
+        if($restrictDate){
+            //限制报名时间
+            $eventTimestamp = strtotime($event['event_date']);
+            $currentTimestamp = time();
+            if($eventTimestamp - $currentTimestamp < 3600 *24){
+                Helper::throwException("报名失败，比赛名单已锁定，请联系活动管理员。");
+            }
+        }
+        
         $sql = "SELECT * FROM participant WHERE participant_event_id = ? AND participant_index = ?";
         $row = $this->sqltool->getRowBySql($sql,[$eventId,$index]);
         $row and Helper::throwException('Place has been taken');
 
         $sql = "SELECT * FROM participant WHERE participant_event_id = ? AND participant_user_id = ?";
         $row = $this->sqltool->getRowBySql($sql,[$eventId,$userId]);
-        $row and Helper::throwException('Can not register a user in the same event multiple times');
-
-        $sql = "SELECT * FROM  event WHERE event_id = ?";
-        $event = $this->sqltool->getRowBySql($sql,[$eventId]);
-        $event or Helper::throwException('Event do not exist');
-
-        $index < $event['event_max_participant'] or Helper::throwException('Index is incorrect');
+        $row and Helper::throwException('报名失败，您已再活动中了');
 
         $arr = [];
         $arr['participant_user_id'] = $userId;
@@ -116,10 +177,20 @@ class EventModel extends Model
         return $row;
     }
 
-    public function deleteParticipant(){
+    public function deleteParticipant($eventId,$userId,$restrictDate = false){
 
-        $eventId = Helper::post('participant_event_id','missing event id');
-        $userId = Helper::post('participant_user_id','missing user id');
+        $sql = "SELECT * FROM  event WHERE event_id = ?";
+        $event = $this->sqltool->getRowBySql($sql,[$eventId]);
+        $event or Helper::throwException('Event do not exist');
+
+        if($restrictDate){
+            //限制报名时间
+            $eventTimestamp = strtotime($event['event_date']);
+            $currentTimestamp = time();
+            if($eventTimestamp - $currentTimestamp < 3600 *24){
+                Helper::throwException("退出失败，比赛名单已锁定，请联系活动管理员。");
+            }
+        }
 
         $sql = "DELETE FROM participant WHERE participant_event_id = ? AND participant_user_id = ?";
         $this->sqltool->query($sql,[$eventId,$userId]);
@@ -208,8 +279,18 @@ class EventModel extends Model
     }
 
     public function getParticipantHistory($participantId){
+        //event.event_title,event.event_date,event.event_location_id
         $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM participant_history LEFT JOIN participant ON participant_history_participant_id = participant_id LEFT JOIN user ON participant_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE participant_history_calculate_for_participant_id = ?  ORDER BY participant_date DESC";
-        return $this->sqltool->getListBySql($sql,[$participantId]);
+        $result = $this->sqltool->getListBySql($sql,[$participantId]);
+        global $place_arr;
+        foreach($result as $k => $v){
+            $place = $place_arr[$v['event_location_id']];
+            $result[$k]['courseName'] = $place->name;
+            $result[$k]['tr'] = $place->{$v['participant_t']}->rating;
+            $result[$k]['ts'] = $place->{$v['participant_t']}->slope;
+            $result[$k]['tp'] = $place->{$v['participant_t']}->par;
+        }
+        return $result;
     }
 
     public function getAllParticipants($userId){

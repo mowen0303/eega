@@ -69,8 +69,17 @@ class RankModel extends Model
     }
 
     public function getRankHistory($userId){
+        global $place_arr;
         $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank_history LEFT JOIN participant ON rank_history_participant_id = participant_id LEFT JOIN user ON rank_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE rank_history_user_id = ?  ORDER BY participant_date DESC";
-        return $this->sqltool->getListBySql($sql,[$userId]);
+        $result = $this->sqltool->getListBySql($sql,[$userId]);
+        foreach($result as $k => $v){
+            $place = $place_arr[$v['event_location_id']];
+            $result[$k]['courseName'] = $place->name;
+            $result[$k]['tr'] = $place->{$v['participant_t']}->rating;
+            $result[$k]['ts'] = $place->{$v['participant_t']}->slope;
+            $result[$k]['tp'] = $place->{$v['participant_t']}->par;
+        }
+        return $result;
     }
 
 }

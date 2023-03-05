@@ -1,6 +1,30 @@
 <?php
 require_once $_SERVER['DOCUMENT_ROOT'] . "/commonServices/config.php";
 
+function getEvent() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $userModel->isCurrentUserHasAuthority('EVENT', 'ENROLL') or Helper::throwException(null, 403);
+        $eventId = Helper::get("eventId","event id is required");
+        $result = $eventModel->getEvents([$eventId])[0];
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function getEventList() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $result = $eventModel->getEvents([0]);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
 
 function modifyEvent() {
     try {
@@ -32,6 +56,7 @@ function modifyEventReview() {
     }
 }
 
+
 function getParticipants() {
     try {
         $userModel = new \model\UserModel();
@@ -44,12 +69,45 @@ function getParticipants() {
     }
 }
 
+
+function addParticipant(){
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $userModel->isCurrentUserHasAuthority('EVENT', 'ENROLL') or Helper::throwException(null, 403);
+        $eventId = Helper::post('participant_event_id','missing event id');
+        $userId = $userModel->getCurrentUserId();
+        $index = Helper::post('participant_index','missing index');
+        $result = $eventModel->addParticipant($eventId,$userId,$index,true);
+        Helper::echoJson(200, "Success", $result, null, null, Helper::echoBackBtn(0,true));
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
 function addParticipantByAdmin() {
     try {
         $userModel = new \model\UserModel();
         $eventModel = new \model\EventModel();
         $userModel->isCurrentUserHasAuthority('EVENT', 'UPDATE') or Helper::throwException(null, 403);
-        $result = $eventModel->addParticipant();
+        $eventId = Helper::post('participant_event_id','missing event id');
+        $userId = Helper::post('participant_user_id','missing user id');
+        $index = Helper::post('participant_index','missing index');
+        $result = $eventModel->addParticipant($eventId,$userId,$index);
+        Helper::echoJson(200, "Success", $result, null, null, Helper::echoBackBtn(0,true));
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function deleteParticipant() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $userModel->isCurrentUserHasAuthority('EVENT', 'UPDATE') or Helper::throwException(null, 403);
+        $eventId = Helper::post('participant_event_id','missing event id');
+        $userId = $userModel->getCurrentUserId();
+        $result = $eventModel->deleteParticipant($eventId,$userId,true);
         Helper::echoJson(200, "Success", $result, null, null, Helper::echoBackBtn(0,true));
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
@@ -61,7 +119,9 @@ function deleteParticipantByAdmin() {
         $userModel = new \model\UserModel();
         $eventModel = new \model\EventModel();
         $userModel->isCurrentUserHasAuthority('EVENT', 'UPDATE') or Helper::throwException(null, 403);
-        $result = $eventModel->deleteParticipant();
+        $eventId = Helper::post('participant_event_id','missing event id');
+        $userId = Helper::post('participant_user_id','missing user id');
+        $result = $eventModel->deleteParticipant($eventId,$userId);
         Helper::echoJson(200, "Success", $result, null, null, Helper::echoBackBtn(0,true));
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
@@ -92,6 +152,32 @@ function updateScore() {
     }
 }
 
+
+function getEventScore() {
+    try {
+        $userModel = new \model\UserModel();
+        $userModel->isCurrentUserHasAuthority("EVENT","GET") or Helper::throwException(null,403);
+        $eventModel = new \model\EventModel();
+        $eventId = Helper::get('eventId','event id is required');
+        $effectRows = $eventModel->getParticipants($eventId);
+        Helper::echoJson(200, "Score update successfully", $effectRows, null, null, Helper::echoBackBtn(1,true));
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function getIndexScoreHistory() {
+    try {
+        $userModel = new \model\UserModel();
+        $userModel->isCurrentUserHasAuthority("EVENT","GET") or Helper::throwException(null,403);
+        $eventModel = new \model\EventModel();
+        $participantId = Helper::get('participantId','participant id is required');
+        $rankHistoryArr = $eventModel->getParticipantHistory($participantId);
+        Helper::echoJson(200, "success", $rankHistoryArr, null, null, Helper::echoBackBtn(1,true));
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
 
 
 ?>

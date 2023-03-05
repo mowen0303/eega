@@ -7,9 +7,23 @@ require_once $_SERVER['DOCUMENT_ROOT'] . "/commonServices/config.php";
 function login(){
     try {
         $userModel = new \model\UserModel();
-        $userModel->login();
+        $result = $userModel->login();
 //        Helper::jumpTo('/admin/adminIndex.php');
-        Helper::jumpTo('/admin/user/index.php?s=user-list');
+        if(Helper::post('marketing') == true){
+            Helper::echoJson(200, "success", $result);
+        }else{
+            Helper::jumpTo('/admin/user/index.php?s=user-list');
+        }
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function isLogin(){
+    try {
+        $userModel = new \model\UserModel();
+        $result = $userModel->isLogin();
+        Helper::echoJson(200, "success", $result);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
     }
@@ -51,6 +65,19 @@ function modifyUser() {
     }
 }
 
+function updateMyProfile() {
+    try {
+        $userModel = new \model\UserModel();
+        $userId = (int) $_COOKIE['cc_id'] or Helper::throwException("No auth", 403);
+        $id = $userModel->modifyUser($userId);
+        $option['customSelectFields'] = ['user_pin','user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar'];
+        $result = $userModel->getUsers([$userId],$option)[0] or Helper::throwException(null,404);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()} {$userModel->imgError}");
+    }
+}
+
 function updatePassword() {
     try {
         $userModel = new \model\UserModel();
@@ -74,12 +101,48 @@ function deleteUserByIds() {
     }
 }
 
-function searchUser(){
+function getMembers(){
     try {
         $userModel = new \model\UserModel();
-        $option['searchValue'] = $_GET['searchValue'] or Helper::throwException("No search value");
-        $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email'];
+        $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar','user_category_title'];
         $result = $userModel->getUsers([0],$option) or Helper::throwException(null,404);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function getUser(){
+    try {
+        $userModel = new \model\UserModel();
+        $userId = Helper::get('user_id','user id is required');
+        $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar'];
+        $result = $userModel->getUsers([$userId],$option)[0] or Helper::throwException(null,404);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function getMyProfile(){
+    try {
+        $userModel = new \model\UserModel();
+        $userId = $userModel->getCurrentUserId();
+        $option['customSelectFields'] = ['user_pin','user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar'];
+        $result = $userModel->getUsers([$userId],$option)[0] or Helper::throwException(null,404);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function updateMyPin(){
+    try {
+        $userModel = new \model\UserModel();
+        $userId = $userModel->getCurrentUserId();
+        $userModel->generatePIN($userId);
+        $option['customSelectFields'] = ['user_pin','user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar'];
+        $result = $userModel->getUsers([$userId],$option)[0] or Helper::throwException(null,404);
         Helper::echoJson(200, "Success", $result);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
