@@ -289,7 +289,7 @@ class UserModel extends Model
         }
 
         $sql = "SELECT {$selectFields} FROM user INNER JOIN user_category ON user_user_category_id = user_category_id WHERE true {$whereCondition} ORDER BY {$orderCondition} user_id DESC";
-        if(array_sum($userIds)!=0){
+        if(array_sum($userIds)!=0 || $option['showAll'] == true){
             $result = $this->sqltool->getListBySql($sql,$bindParams);
         }else{
             $result = $this->getListWithPage('user',$sql,$bindParams,$pageSize);
