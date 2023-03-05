@@ -105,6 +105,7 @@ function getMembers(){
     try {
         $userModel = new \model\UserModel();
         $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar','user_category_title'];
+        $option['showAll'] = true;
         $result = $userModel->getUsers([0],$option) or Helper::throwException(null,404);
         Helper::echoJson(200, "Success", $result);
     } catch (Exception $e) {
