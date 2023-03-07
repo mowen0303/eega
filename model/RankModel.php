@@ -64,7 +64,13 @@ class RankModel extends Model
         if ($orderBy) {
             $orderCondition = "{$orderBy} {$sequence},";
         }
-        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank LEFT JOIN user ON rank_user_id = user_id WHERE true {$whereCondition} ORDER BY {$orderCondition} rank_handicap_index ASC";
+
+        //0 已缴费会员 1全部会员
+        if($option['type'] == 0){
+            $whereCondition = " AND user_user_category_id IN (1,2) ";
+        }
+
+        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank LEFT JOIN user ON rank_user_id = user_id LEFT JOIN user_category ON user_user_category_id = user_category_id WHERE true {$whereCondition} ORDER BY {$orderCondition} rank_handicap_index ASC";
         return $this->sqltool->getListBySql($sql,$bindParams);
     }
 

@@ -6,9 +6,9 @@ function getRank() {
     try {
         $userModel = new \model\UserModel();
         $rankModel = new \model\RankModel();
-        $eventId = Helper::post('event_id');
         $userModel->isCurrentUserHasAuthority('RANK', 'GET') or Helper::throwException(null, 403);
-        $rankArr = $rankModel->getRank();
+        $option['type'] = $eventId = Helper::get('type');
+        $rankArr = $rankModel->getRank($option);
         Helper::echoJson(200, "Success", $rankArr);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());

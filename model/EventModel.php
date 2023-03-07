@@ -33,6 +33,10 @@ class EventModel extends Model
         $whereCondition = "";
         $orderCondition = "";
 
+        if($option['type']=="review"){
+            $whereCondition .= " AND event_review_content IS NOT NULL ";
+        }
+
         $orderBy    = $option['orderBy'];
         $sequence   = $option['sequence']?:'DESC';
         $pageSize   = $option['pageSize']?:40;
@@ -46,11 +50,13 @@ class EventModel extends Model
             $orderCondition = "{$orderBy} {$sequence},";
         }
         $sql = "SELECT * FROM event WHERE true {$whereCondition} ORDER BY {$orderCondition} event_id DESC";
-        if(array_sum($id)!=0){
-            $result = $this->sqltool->getListBySql($sql,$bindParams);
-        }else{
-            $result = $this->getListWithPage('event',$sql,$bindParams,$pageSize);
-        }
+        // if(array_sum($id)!=0){
+        //     $result = $this->sqltool->getListBySql($sql,$bindParams);
+        // }else{
+        //     $result = $this->getListWithPage('event',$sql,$bindParams,$pageSize);
+        // }
+
+        $result = $this->sqltool->getListBySql($sql,$bindParams);
 
         global $place_arr;
         foreach($result as $k => $v){
@@ -139,7 +145,7 @@ class EventModel extends Model
         return $result;
     }
 
-    public function addParticipant($eventId,$userId,$index,$restrictDate = false){
+    public function addParticipant($eventId,$userId,$index,$restrictDate = false, $pin = null){
 
         $sql = "SELECT * FROM  event WHERE event_id = ?";
         $event = $this->sqltool->getRowBySql($sql,[$eventId]);
@@ -147,6 +153,13 @@ class EventModel extends Model
 
         if($index < 0 || $index >$event['event_max_participant']){
             Helper::throwException('Index is incorrect');
+        }
+
+        if($pin){
+            $sql = "SELECT * FROM user WHERE user_pin = ?";
+            $user = $this->sqltool->getRowBySql($sql,[$pin]);
+            $user or Helper::throwException("PIN无效");
+            $userId = $user['user_id'];
         }
 
         if($restrictDate){

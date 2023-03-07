@@ -25,6 +25,18 @@ function getEventList() {
     }
 }
 
+function getEventReviewList() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $option['type'] = "review";
+        $result = $eventModel->getEvents([0],$option);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
 
 function modifyEvent() {
     try {
@@ -79,6 +91,22 @@ function addParticipant(){
         $userId = $userModel->getCurrentUserId();
         $index = Helper::post('participant_index','missing index');
         $result = $eventModel->addParticipant($eventId,$userId,$index,true);
+        Helper::echoJson(200, "Success", $result, null, null, Helper::echoBackBtn(0,true));
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function addParticipantByPIN(){
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $userModel->isCurrentUserHasAuthority('EVENT', 'ENROLL') or Helper::throwException(null, 403);
+        $eventId = Helper::post('participant_event_id','missing event id');
+        $userId = $userModel->getCurrentUserId();
+        $pin = Helper::post("pin","PIN is required");
+        $index = Helper::post('participant_index','missing index');
+        $result = $eventModel->addParticipant($eventId,$userId,$index,true,$pin);
         Helper::echoJson(200, "Success", $result, null, null, Helper::echoBackBtn(0,true));
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());

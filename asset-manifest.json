@@ -1,23 +1,24 @@
 {
   "files": {
     "main.css": "/static/css/main.a91d2651.chunk.css",
-    "main.js": "/static/js/main.cb0e838d.chunk.js",
-    "main.js.map": "/static/js/main.cb0e838d.chunk.js.map",
+    "main.js": "/static/js/main.813640fb.chunk.js",
+    "main.js.map": "/static/js/main.813640fb.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.e08153e6.js",
     "runtime-main.js.map": "/static/js/runtime-main.e08153e6.js.map",
-    "static/js/2.2896dff0.chunk.js": "/static/js/2.2896dff0.chunk.js",
-    "static/js/2.2896dff0.chunk.js.map": "/static/js/2.2896dff0.chunk.js.map",
+    "static/js/2.af43e71a.chunk.js": "/static/js/2.af43e71a.chunk.js",
+    "static/js/2.af43e71a.chunk.js.map": "/static/js/2.af43e71a.chunk.js.map",
     "index.html": "/index.html",
     "static/css/main.a91d2651.chunk.css.map": "/static/css/main.a91d2651.chunk.css.map",
-    "static/js/2.2896dff0.chunk.js.LICENSE.txt": "/static/js/2.2896dff0.chunk.js.LICENSE.txt",
-    "static/media/bg-coworking.06bccc47.jpeg": "/static/media/bg-coworking.06bccc47.jpeg",
+    "static/js/2.af43e71a.chunk.js.LICENSE.txt": "/static/js/2.af43e71a.chunk.js.LICENSE.txt",
+    "static/media/bg-index2.72d32d1c.jpg": "/static/media/bg-index2.72d32d1c.jpg",
     "static/media/bg-sign-in-basic.f327db1d.jpeg": "/static/media/bg-sign-in-basic.f327db1d.jpeg",
-    "static/media/city-profile.4d64bba9.jpg": "/static/media/city-profile.4d64bba9.jpg"
+    "static/media/city-profile.4d64bba9.jpg": "/static/media/city-profile.4d64bba9.jpg",
+    "static/media/logo.0a7e8af4.jpg": "/static/media/logo.0a7e8af4.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.e08153e6.js",
-    "static/js/2.2896dff0.chunk.js",
+    "static/js/2.af43e71a.chunk.js",
     "static/css/main.a91d2651.chunk.css",
-    "static/js/main.cb0e838d.chunk.js"
+    "static/js/main.813640fb.chunk.js"
   ]
 }
