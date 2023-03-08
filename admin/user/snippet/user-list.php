@@ -85,6 +85,7 @@ try {
                         <thead>
                         <tr>
                             <th width="21px"><input id="cBoxAll" type="checkbox"></th>
+                            <th>#</th>
                             <th>AVATAR</th>
                             <th>Username</th>
                             <th>First name</th>
@@ -105,6 +106,7 @@ try {
                                 <td>
                                     <input type="checkbox" class="cBox" name="id[]" value="<?=$row['user_id']?>">
                                 </td>
+                                <td><?=$row['user_id']?></td>
                                 <td><div class="avatar avatar-40" style="background-image: url('<?=$row['user_avatar']?>')"></td>
                                 <td><a data-hl-search href="/admin/user/index.php?s=user-list-profile&userId=<?=$row['user_id']?>"><?=$row['user_name']?></a></td>
                                 <td data-hl-search><?=$row['user_first_name']?></td>
