@@ -42,7 +42,7 @@ try {
                         <div class="form-group">
                             <label class="col-sm-3 control-label">User name *</label>
                             <div class="col-sm-6">
-                                <input type="text" <?php echo $userId?'disabled':''?> name="user_name" value="<?php echo $row['user_name']?>" class="form-control" placeholder="user name for login">
+                                <input type="text" name="user_name" value="<?php echo $row['user_name']?>" class="form-control" placeholder="user name for login">
                             </div>
                         </div>
 

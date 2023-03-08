@@ -319,6 +319,7 @@ class UserModel extends Model
                 $this->getCurrentUserCategoryLevel() < $targetUserCategoryLevel or Helper::throwException("You can not add/update a user who has the same or higher than you");
             }
         }
+        $arr['user_name'] = Helper::post('user_name','User name can not be null',4);
         $arr['user_last_name'] = ucfirst(strtolower(Helper::post('user_last_name','Last Name can not be null')));
         $arr['user_first_name'] = ucfirst(strtolower(Helper::post('user_first_name','First Name can not be null')));
         $arr['user_phone'] = Helper::post('user_phone');
@@ -333,7 +334,6 @@ class UserModel extends Model
         } else {
             //添加
             $arr['user_avatar'] = $this->defaultAvatar;
-            $arr['user_name'] = Helper::post('user_name','User name can not be null',4);
             $arr['user_pwd'] = md5(Helper::post('user_pwd','Password can not be null',6));
             $arr['user_pin'] = "TEMPIN";
             $id = $this->addRow('user', $arr);
