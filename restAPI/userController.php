@@ -106,6 +106,8 @@ function getMembers(){
         $userModel = new \model\UserModel();
         $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar','user_category_title','user_category_id'];
         $option['showAll'] = true;
+        $option['orderBy'] = Helper::get('orderBy');
+        $option['sort'] = Helper::get('sort');
         $userId = $userModel->getCurrentUserId();
         $result = $userModel->getUsers([0],$option) or Helper::throwException(null,404);
         Helper::echoJson(200, "Success", $result);
@@ -192,6 +194,16 @@ function generatePINOfCurrentUser() {
         $userModel = new \model\UserModel();
         $result = $userModel->generatePIN($userModel->getCurrentUserId());
         Helper::echoJson(200, "Success", $result, null, null, $_SESSION['back_url_1']);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()}");
+    }
+}
+
+function getAmountOfUser() {
+    try {
+        $userModel = new \model\UserModel();
+        $result = $userModel->getAmountOfUser();
+        Helper::echoJson(200, "Success", $result);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()}");
     }

@@ -282,11 +282,16 @@ class UserModel extends Model
             $orderCondition = "user_id {$sort},";
         }else if($option['orderBy'] == 'lastName'){
             $orderCondition = "user_last_name {$sort},";
+        }else if($option['orderBy'] == 'firstName'){
+            $orderCondition = "user_first_name {$sort},";
         }else if($option['orderBy'] == 'group'){
             $orderCondition = "user_category_id {$sort},";
-        }else if($option['orderBy'] == 'company'){
-            $orderCondition = "company_name {$sort},";
+        }else if($option['orderBy'] == 'userId'){
+            $orderCondition = "user_id {$sort},";
         }
+
+        // var_dump($option['orderBy']);
+        // die
 
         $sql = "SELECT {$selectFields} FROM user INNER JOIN user_category ON user_user_category_id = user_category_id WHERE true {$whereCondition} ORDER BY {$orderCondition} user_id DESC";
         if(array_sum($userIds)!=0 || $option['showAll'] == true){
@@ -552,6 +557,11 @@ class UserModel extends Model
         }else{
             return $this->generatePIN($userId);
         }
+    }
+
+    function getAmountOfUser(){
+        $sql = "select count(user_id) as amount from user";
+        return $this->sqltool->getRowBySql($sql, null);
     }
 }
 
