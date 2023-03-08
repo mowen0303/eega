@@ -86,7 +86,9 @@ try {
                         <tr>
                             <th width="21px"><input id="cBoxAll" type="checkbox"></th>
                             <th>AVATAR</th>
-                            <th><a <?=$userModel->getUserListOrderUrl('lastName')?>>NAME / Username</a></th>
+                            <th>Username</th>
+                            <th>First name</th>
+                            <th><a <?=$userModel->getUserListOrderUrl('lastName')?>>Last name</a></th>
                             <th>Email</th>
                             <th>Phone</th>
                             <th>GROUP</th>
@@ -104,11 +106,9 @@ try {
                                     <input type="checkbox" class="cBox" name="id[]" value="<?=$row['user_id']?>">
                                 </td>
                                 <td><div class="avatar avatar-40" style="background-image: url('<?=$row['user_avatar']?>')"></td>
-                                <td data-hl-orderby="username">
-                                    <a data-hl-search href="/admin/user/index.php?s=user-list-profile&userId=<?=$row['user_id']?>"><?=$row['user_first_name'] ?> <?=$row['user_last_name'] ?></a>
-                                    <br>
-                                    <span data-hl-search><?=$row['user_name'] ?></span>
-                                </td>
+                                <td><a data-hl-search href="/admin/user/index.php?s=user-list-profile&userId=<?=$row['user_id']?>"><?=$row['user_name']?></a></td>
+                                <td data-hl-search><?=$row['user_first_name']?></td>
+                                <td data-hl-search><?=$row['user_last_name'] ?></td>
                                 <td><?=$row['user_email']?></td>
                                 <td><?=$row['user_phone']?></td>
                                 <td><span class="label label-success"><?=$row['user_category_title']?></span></td>
