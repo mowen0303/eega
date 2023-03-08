@@ -104,7 +104,7 @@ function deleteUserByIds() {
 function getMembers(){
     try {
         $userModel = new \model\UserModel();
-        $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar','user_category_title'];
+        $option['customSelectFields'] = ['user_id','user_name','user_first_name','user_last_name','user_email','user_phone','user_avatar','user_category_title','user_category_id'];
         $option['showAll'] = true;
         $userId = $userModel->getCurrentUserId();
         $result = $userModel->getUsers([0],$option) or Helper::throwException(null,404);
