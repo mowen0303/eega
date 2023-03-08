@@ -28,6 +28,10 @@ $_AUT = [
     'RANK'=>
         [
             'GET'=>getAuthorityNum(1),
+        ],
+    'ANNOUNCE'=>
+        [
+            'UPDATE'=>getAuthorityNum(1),
         ]
 ];
 function getAuthorityNum($int){return pow(2,$int);}

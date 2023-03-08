@@ -131,7 +131,7 @@ try {
                 <ul class="nav" id="side-menu">
 <!--                    <li><a href="/admin/adminIndex.php" class="waves-effect"><i class="mdi mdi-av-timer fa-fw"></i> <span class="hide-menu">Dashboard</span></a></li>-->
 
-
+                    <li><a href="/admin/announce/index.php?s=announce-list" class="waves-effect"><i class="mdi mdi-volume-high fa-fw"></i> <span class="hide-menu">Announce<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/rank/index.php?s=rank-list" class="waves-effect"><i class="mdi mdi-trophy fa-fw"></i> <span class="hide-menu">Rank<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/event/index.php?s=event-list" class="waves-effect"><i class="mdi mdi-airballoon fa-fw"></i> <span class="hide-menu">Event<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/sponsor/index.php?s=sponsor-page" class="waves-effect"><i class="mdi mdi-octagram fa-fw"></i> <span class="hide-menu">Sponsor<span class="fa arrow"></span></span></a></li>
