@@ -53,7 +53,7 @@ function modifyUser() {
         if($userId){
             //修改
             $userModel->isCurrentUserHasAuthority('USER', 'UPDATE', $userId) or Helper::throwException(null, 403);
-            $userModel->modifyUser($userId);
+            $userModel->modifyUser($userId,true);
         }else{
             //添加
             $userModel->isCurrentUserHasAuthority('USER', 'ADD') or Helper::throwException(null, 403);

@@ -285,7 +285,7 @@ class UserModel extends Model
         }else if($option['orderBy'] == 'firstName'){
             $orderCondition = "user_first_name {$sort},";
         }else if($option['orderBy'] == 'group'){
-            $orderCondition = "user_category_id {$sort},";
+            $orderCondition = "user_category_level {$sort},";
         }else if($option['orderBy'] == 'userId'){
             $orderCondition = "user_id {$sort},";
         }
@@ -315,7 +315,7 @@ class UserModel extends Model
      * @return int
      * @throws \Exception
      */
-    public function modifyUser(int $id=null){
+    public function modifyUser(int $id=null, $isAdmin = false){
         $isAdminManage = (int) Helper::post('isAdminManage');
         if($isAdminManage){
             if($id != $this->getCurrentUserId()){
@@ -324,7 +324,10 @@ class UserModel extends Model
                 $this->getCurrentUserCategoryLevel() < $targetUserCategoryLevel or Helper::throwException("You can not add/update a user who has the same or higher than you");
             }
         }
-        $arr['user_name'] = Helper::post('user_name','User name can not be null',4);
+        $username = Helper::post('user_name');
+        if($isAdmin && $username){
+            $arr['user_name'] = $username;
+        }
         $arr['user_last_name'] = ucfirst(strtolower(Helper::post('user_last_name','Last Name can not be null')));
         $arr['user_first_name'] = ucfirst(strtolower(Helper::post('user_first_name','First Name can not be null')));
         $arr['user_phone'] = Helper::post('user_phone');
