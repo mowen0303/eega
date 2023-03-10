@@ -382,8 +382,10 @@ class UserModel extends Model
         if(!$isAdminManage){
             $password0 = md5(Helper::post('pw0',"Old password can not be null"));
             $sql = "SELECT user_id FROM user WHERE user_id IN ({$userId}) AND user_pwd = '{$password0}'";
-            $this->sqltool->getRowBySql($sql) or Helper::throwException("Your old password is not correct");
+            $this->sqltool->getRowBySql($sql) or Helper::throwException("Your current password is not correct");
 
+        }else{
+            $this->isCurrentUserHasAuthority('USER', 'UPDATE') or Helper::throwException(null, 403);
         }
         $password1 == $password2 or Helper::throwException("Your new password an confirm new password are not same");
         $arr['user_pwd'] = md5($password1);

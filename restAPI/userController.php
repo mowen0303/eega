@@ -78,6 +78,17 @@ function updateMyProfile() {
     }
 }
 
+function updateMyPwd() {
+    try {
+        $userModel = new \model\UserModel();
+        $userId = $userModel->getCurrentuserId();
+        $userModel->updatePassword($userId);
+        Helper::echoJson(200, "Success");
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()} {$userModel->imgError}");
+    }
+}
+
 function updatePassword() {
     try {
         $userModel = new \model\UserModel();
