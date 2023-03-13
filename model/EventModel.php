@@ -42,6 +42,12 @@ class EventModel extends Model
         }
     }
 
+    public function getNextEvent(){
+        $today = date("Y-m-d");
+        $sql = "SELECT * FROM `event` WHERE event_date >= ? LIMIT 0,1";
+        return $this->sqltool->getRowBySql($sql,[$today]);
+    }
+
 
     public function getEvents(array $id,array $option=[]){
         $bindParams = [];

@@ -14,6 +14,16 @@ function getEvent() {
     }
 }
 
+function getNextEvent() {
+    try {
+        $eventModel = new \model\EventModel();
+        $result = $eventModel->getNextEvent();
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
 function getEventList() {
     try {
         $userModel = new \model\UserModel();
