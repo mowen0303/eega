@@ -6,8 +6,6 @@ try {
     $company = $user;
     $companyLocation = $user;
     $profileTitle = "User Profile";
-    $companyTitle = "User Company Info";
-    $companyLocationTitle = "User Company Location Info";
 } catch (Exception $e) {
     Helper::echoJson($e->getCode(),$e->getMessage());
     die();

@@ -26,6 +26,22 @@ class EventModel extends Model
         return $id;
     }
 
+    public function getEventJoinStatus($eventDate){
+        $currentTime = strtotime(date("Y-m-d"));
+        $time = strtotime($eventDate) - $currentTime;
+        if($time == 0){
+            return "今日比赛";
+        }else if($time < 0){
+            return "已结束";
+        }else if($time <= 3600 * 24){
+            return "报名已锁定";
+        }else if($time <= 3600 * 24 * 10){
+            return "开放报名";
+        }else{
+            return "未开放";
+        }
+    }
+
 
     public function getEvents(array $id,array $option=[]){
         $bindParams = [];
@@ -58,46 +74,55 @@ class EventModel extends Model
 
         $result = $this->sqltool->getListBySql($sql,$bindParams);
 
-        global $place_arr;
-        foreach($result as $k => $v){
-            $place = $place_arr[$v['event_location_id']];
-            $result[$k]['courseName'] = $place->name;
-            if($place->red){
-                $result[$k]['t_red'] = [
-                    'rating'=>$place->red->rating,
-                    'slope'=>$place->red->slope,
-                    'par'=>$place->red->par
-                ];
+        if($result){
+            global $place_arr;
+            foreach($result as $k => $v){
+                //整合报名状态
+                $result[$k]['event_join_status'] = $this->getEventJoinStatus($v['event_date']);
+
+                //整合球场信息
+                $place = $place_arr[$v['event_location_id']];
+                $result[$k]['courseName'] = $place->name;
+                if($place->red){
+                    $result[$k]['t_red'] = [
+                        'rating'=>$place->red->rating,
+                        'slope'=>$place->red->slope,
+                        'par'=>$place->red->par
+                    ];
+                }
+                if($place->green){
+                    $result[$k]['t_green'] = [
+                        'rating'=>$place->green->rating,
+                        'slope'=>$place->green->slope,
+                        'par'=>$place->green->par
+                    ];
+                }
+                if($place->white){
+                    $result[$k]['t_white'] = [
+                        'rating'=>$place->white->rating,
+                        'slope'=>$place->white->slope,
+                        'par'=>$place->white->par
+                    ];
+                }
+                if($place->blue){
+                    $result[$k]['t_blue'] = [
+                        'rating'=>$place->blue->rating,
+                        'slope'=>$place->blue->slope,
+                        'par'=>$place->blue->par
+                    ];
+                }
+                if($place->black){
+                    $result[$k]['t_black'] = [
+                        'rating'=>$place->black->rating,
+                        'slope'=>$place->black->slope,
+                        'par'=>$place->black->par
+                    ];
+                }
             }
-            if($place->green){
-                $result[$k]['t_green'] = [
-                    'rating'=>$place->green->rating,
-                    'slope'=>$place->green->slope,
-                    'par'=>$place->green->par
-                ];
-            }
-            if($place->white){
-                $result[$k]['t_white'] = [
-                    'rating'=>$place->white->rating,
-                    'slope'=>$place->white->slope,
-                    'par'=>$place->white->par
-                ];
-            }
-            if($place->blue){
-                $result[$k]['t_blue'] = [
-                    'rating'=>$place->blue->rating,
-                    'slope'=>$place->blue->slope,
-                    'par'=>$place->blue->par
-                ];
-            }
-            if($place->black){
-                $result[$k]['t_black'] = [
-                    'rating'=>$place->black->rating,
-                    'slope'=>$place->black->slope,
-                    'par'=>$place->black->par
-                ];
-            }
+        }else{
+            $result = [];
         }
+        
         return $result;
     }
 
@@ -134,13 +159,17 @@ class EventModel extends Model
 
         $sql = "SELECT participant.*,event.event_location_id,event.event_title,event.event_date,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN event ON participant_event_id = event_id LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id IN ($eventId) ORDER BY {$orderCondition} participant_id DESC";
         $result = $this->sqltool->getListBySql($sql,null);
-        global $place_arr;
-        foreach($result as $k => $v){
-            $place = $place_arr[$v['event_location_id']];
-            $result[$k]['courseName'] = $place->name;
-            $result[$k]['tr'] = $place->{$v['participant_t']}->rating;
-            $result[$k]['ts'] = $place->{$v['participant_t']}->slope;
-            $result[$k]['tp'] = $place->{$v['participant_t']}->par;
+        if($result){
+            global $place_arr;
+            foreach($result as $k => $v){
+                $place = $place_arr[$v['event_location_id']];
+                $result[$k]['courseName'] = $place->name;
+                $result[$k]['tr'] = $place->{$v['participant_t']}->rating;
+                $result[$k]['ts'] = $place->{$v['participant_t']}->slope;
+                $result[$k]['tp'] = $place->{$v['participant_t']}->par;
+            }
+        }else{
+            $result = [];
         }
         return $result;
     }
@@ -164,10 +193,13 @@ class EventModel extends Model
 
         if($restrictDate){
             //限制报名时间
-            $eventTimestamp = strtotime($event['event_date']);
-            $currentTimestamp = time();
-            if($eventTimestamp - $currentTimestamp < 3600 *24){
+            $eventStatus = $this->getEventJoinStatus($event['event_date']);
+            if($eventStatus == "今日比赛" || $eventStatus == "报名已锁定"){
                 Helper::throwException("报名失败，比赛名单已锁定，请联系活动管理员。");
+            }else if($eventStatus == "已结束"){
+                Helper::throwException("报名失败，活动已结束。");
+            }else if($eventStatus == "未开放"){
+                Helper::throwException("报名失败，活动暂未开放，最早报名时间为活动开始前10日。");
             }
         }
         
@@ -198,10 +230,13 @@ class EventModel extends Model
 
         if($restrictDate){
             //限制报名时间
-            $eventTimestamp = strtotime($event['event_date']);
-            $currentTimestamp = time();
-            if($eventTimestamp - $currentTimestamp < 3600 *24){
+            $eventStatus = $this->getEventJoinStatus($event['event_date']);
+            if($eventStatus == "今日比赛" || $eventStatus == "报名已锁定"){
                 Helper::throwException("退出失败，比赛名单已锁定，请联系活动管理员。");
+            }else if($eventStatus == "已结束"){
+                Helper::throwException("退出失败，活动已结束。");
+            }else if($eventStatus == "未开放"){
+                Helper::throwException("退出失败，活动暂未开放，最早报名时间为活动开始前10日。");
             }
         }
 

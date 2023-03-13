@@ -54,6 +54,12 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label class="control-label col-md-3">Birthday:</label>
+                                    <div class="col-md-7">
+                                        <p class="form-control-static"><?=$user['user_month']?>-<?=$user['user_day']?></p>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="control-label col-md-3">Register Time:</label>
                                     <div class="col-md-7">
                                         <p class="form-control-static"><?=$user['user_register_time']?></p>

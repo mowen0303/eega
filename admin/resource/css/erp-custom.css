@@ -137,6 +137,11 @@ table h3 {margin-bottom: 0}
 #userNameInputDatalist div:hover {background: #eee}
 
 
+.articleWrap {font-size: 15px;padding:1em;}
+.articleWrap table {width: 100%; overflow: hidden; color: #6a6a6a; border-collapse: collapse;}
+.articleWrap table th,.articleWrap table td { border-collapse: collapse; text-align: left; padding:1em; border:1px solid #e4e4e4}
+.articleWrap tr:hover {background-color: #efefef; transition: 0.5s;}
+
 @media print {
     a[href]:after {
         content: none !important;

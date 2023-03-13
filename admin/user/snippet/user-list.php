@@ -92,6 +92,7 @@ try {
                             <th><a <?=$userModel->getUserListOrderUrl('lastName')?>>Last name</a></th>
                             <th>Email</th>
                             <th>Phone</th>
+                            <th>Birthday</th>
                             <th>GROUP</th>
                             <th><a <?=$userModel->getUserListOrderUrl('lastLoginTime')?>>LAST LOGIN TIME</a></th>
                             <th>SCORE HISTORY</th>
@@ -113,6 +114,7 @@ try {
                                 <td data-hl-search><?=$row['user_last_name'] ?></td>
                                 <td><?=$row['user_email']?></td>
                                 <td><?=$row['user_phone']?></td>
+                                <td><?=$row['user_month']?>-<?=$row['user_day']?></td>
                                 <td><span class="label label-success"><?=$row['user_category_title']?></span></td>
                                 <td data-hl-orderby="lastLoginTime"><?=$row['user_last_login_time']?></td>
                                 <td>

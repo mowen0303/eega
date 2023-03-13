@@ -89,6 +89,18 @@ try {
                         </div>
 
                         <div class="form-group">
+                            <label class="col-sm-3 control-label">Birthday</label>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" name="user_month" value="<?php echo $row['user_month']?>">
+                                <span class="help-block"><small>Month</small></span>
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" class="form-control" name="user_day" value="<?php echo $row['user_day']?>">
+                                <span class="help-block"><small>Day</small></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-sm-3 control-label">Email</label>
                             <div class="col-sm-6">
                                 <input type="text" name="user_email" value="<?php echo $row['user_email']?>" class="form-control" placeholder="Email">

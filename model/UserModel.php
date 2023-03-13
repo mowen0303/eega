@@ -330,6 +330,10 @@ class UserModel extends Model
         }
         $arr['user_last_name'] = ucfirst(strtolower(Helper::post('user_last_name','Last Name can not be null')));
         $arr['user_first_name'] = ucfirst(strtolower(Helper::post('user_first_name','First Name can not be null')));
+        $arr['user_month'] = ucfirst(strtolower(Helper::post('user_month')));
+        $arr['user_month'] = $arr['user_month'] == "" ? null : $arr['user_month'];
+        $arr['user_day'] = ucfirst(strtolower(Helper::post('user_day')));
+        $arr['user_day'] = $arr['user_day'] == "" ? null : $arr['user_day'];
         $arr['user_phone'] = Helper::post('user_phone');
         $arr['user_email'] = Helper::post('user_email');
         $arr['user_status'] = 1;

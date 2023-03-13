@@ -24,7 +24,7 @@ try {
 
 <div class="row">
     <div class="col-sm-12">
-        <div class="white-box">
+        <div class="white-box articleWrap">
             <?=$row['sponsor_content']?>
         </div>
     </div>
