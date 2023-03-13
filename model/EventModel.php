@@ -48,6 +48,12 @@ class EventModel extends Model
         return $this->sqltool->getRowBySql($sql,[$today]);
     }
 
+    public function deleteEventReview($id){
+        $arr = [];
+        $arr['event_review_content'] = null;
+        return $this->updateRowById('event', $id, $arr,false);
+    }
+
 
     public function getEvents(array $id,array $option=[]){
         $bindParams = [];

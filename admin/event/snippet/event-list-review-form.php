@@ -24,6 +24,7 @@ try {
     </div>
     <label class="col-sm-8 control-label">
         <?php Helper::echoBackBtn();?>
+        <a href="/restAPI/eventController.php?action=deleteEventReview&eventId=<?=$eventId?>" class="btn btn-danger pull-right">Delete</a>
     </label>
 </div>
 <!--header end-->

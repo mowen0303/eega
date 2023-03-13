@@ -14,6 +14,31 @@ function getEvent() {
     }
 }
 
+function deleteEventReview() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $userModel->isCurrentUserHasAuthority('EVENT', 'UPDATE') or Helper::throwException(null, 403);
+        $eventId = Helper::get("eventId","event id is required");
+        $result = $eventModel->deleteEventReview($eventId);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+function getEventReview() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $eventId = Helper::get("eventId","event id is required");
+        $result = $eventModel->getEvents([$eventId])[0];
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
 function getNextEvent() {
     try {
         $eventModel = new \model\EventModel();
