@@ -1,0 +1,21 @@
+[Thu Feb 02 03:46:08.244783 2023] [php7:error] [pid 1409455] [client 23.91.100.175:58026] script '/var/www/eega/reg.php' not found or unable to stat, referer: http://test.v-tec.ca/reg.php
+[Thu Feb 02 03:46:09.852700 2023] [php7:error] [pid 1409355] [client 23.91.100.175:58828] script '/var/www/eega/waplogin.php' not found or unable to stat, referer: http://test.v-tec.ca/waplogin.php
+[Thu Feb 02 03:46:10.524021 2023] [php7:error] [pid 1408695] [client 23.91.100.175:58726] script '/var/www/eega/index.php' not found or unable to stat, referer: http://test.v-tec.ca/index.php/sign
+[Thu Feb 02 03:46:17.648258 2023] [php7:error] [pid 1409197] [client 23.91.100.175:58724] script '/var/www/eega/index.php' not found or unable to stat, referer: http://test.v-tec.ca/index.php/User/sendsmscode
+[Thu Feb 02 03:46:18.162214 2023] [php7:error] [pid 1409137] [client 23.91.100.175:58642] script '/var/www/eega/index.php' not found or unable to stat, referer: http://test.v-tec.ca/index.php/Wap/Api/getBanner
+[Thu Feb 02 03:46:19.744774 2023] [php7:error] [pid 1409355] [client 23.91.100.175:58828] script '/var/www/eega/admin/webadmin.php' not found or unable to stat, referer: http://test.v-tec.ca/admin/webadmin.php?mod=do&act=login
+[Thu Feb 02 03:46:20.124762 2023] [php7:error] [pid 1409355] [client 23.91.100.175:58828] script '/var/www/eega/index.php' not found or unable to stat, referer: http://test.v-tec.ca/index.php/Wap/Api/getSystemNotice?id=1
+[Thu Feb 02 03:46:20.360261 2023] [php7:error] [pid 1409327] [client 23.91.100.175:59054] script '/var/www/eega/index.php' not found or unable to stat, referer: http://test.v-tec.ca/index.php?m=api&c=app&a=getPlatformConfig
+[Thu Feb 02 03:46:21.073858 2023] [php7:error] [pid 1409446] [client 23.91.100.175:58908] script '/var/www/eega/leftDao.php' not found or unable to stat, referer: http://test.v-tec.ca/leftDao.php?callback=jQuery183016740860980352856_1604309800583
+[Fri Feb 03 03:38:14.797197 2023] [php7:error] [pid 1429793] [client 142.189.115.70:58602] PHP Parse error:  syntax error, unexpected end of file in /var/www/eega/admin/user/snippet/user-list.php on line 137, referer: http://test.v-tec.ca/admin/user/index.php?s=user-list
+[Fri Feb 03 14:45:56.920504 2023] [php7:error] [pid 1429928] [client 99.228.5.212:62204] script '/var/www/eega/admin/adminlogin.php' not found or unable to stat
+[Fri Feb 03 14:46:02.895393 2023] [php7:error] [pid 1429751] [client 99.228.5.212:62205] script '/var/www/eega/admin/adminlogin.php' not found or unable to stat
+[Fri Feb 03 14:51:36.619442 2023] [php7:error] [pid 1438933] [client 99.228.5.212:62230] script '/var/www/eega/admin/adminlogin.php' not found or unable to stat
+[Sun Mar 05 04:04:17.193454 2023] [php7:error] [pid 2003524] [client 142.189.114.206:61348] script '/var/www/eega/phpinfo.php' not found or unable to stat
+[Mon Mar 06 16:33:03.466226 2023] [access_compat:error] [pid 2026314] [client 70.52.143.252:50072] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
+[Mon Mar 06 16:33:04.648818 2023] [access_compat:error] [pid 2024021] [client 70.52.143.252:50073] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
+[Mon Mar 06 16:33:05.827989 2023] [access_compat:error] [pid 2026314] [client 70.52.143.252:50072] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
+[Mon Mar 06 16:33:06.442491 2023] [access_compat:error] [pid 2023983] [client 70.52.143.252:50082] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
+[Mon Mar 06 16:33:06.836227 2023] [access_compat:error] [pid 2026314] [client 70.52.143.252:50072] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
+[Mon Mar 06 16:33:07.656337 2023] [access_compat:error] [pid 2023983] [client 70.52.143.252:50082] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
+[Mon Mar 06 16:33:08.836428 2023] [access_compat:error] [pid 2026314] [client 70.52.143.252:50072] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
