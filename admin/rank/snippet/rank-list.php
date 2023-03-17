@@ -3,7 +3,8 @@ try {
     global $userModel;
     global $place_arr;
     $rankModel = new \model\RankModel();
-    $rankArr = $rankModel->getRank();
+    $option['type'] = 1;
+    $rankArr = $rankModel->getRank($option);
     $rankValue = 1;
 } catch (Exception $e) {
     Helper::echoJson(0, $e->getMessage());
@@ -34,6 +35,7 @@ try {
                             <th width="300">Name</th>
                             <th>HANDICAP INDEX</th>
                             <th>SCORE COUNT</th>
+                            <th>USER CATEGORY</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -46,6 +48,7 @@ try {
                                 <td><?=$row['user_first_name'] ?> <?=$row['user_last_name'] ?></td>
                                 <td><a href="/admin/rank/index.php?s=rank-list-history&userId=<?=$row['rank_user_id']?>"><?=$row['rank_handicap_index'] ?></a></td>
                                 <td><?=$row['rank_history_count'] ?></td>
+                                <td><?=$row['user_category_title'] ?></td>
                             </tr>
                             <?php
                         }
