@@ -35,6 +35,7 @@ try {
                         <thead>
                         <tr>
                             <th width="21px"><input id="cBoxAll" type="checkbox"></th>
+                            <th>Cover</th>
                             <th>Title</th>
                             <th>Date</th>
                             <th width="140"></th>
@@ -48,6 +49,7 @@ try {
                                 <td>
                                     <input type="checkbox" class="cBox" name="id[]" value="<?=$row['article_id']?>">
                                 </td>
+                                <td width="130px"><img style="width:120px;height:70px;object-fit:cover;border-radius:6px" src="<?=$row['article_img']?>"/></td>
                                 <td><?=$row['article_title']?></td>
                                 <td><?=$row['article_date']?></td>
                                 <td>
