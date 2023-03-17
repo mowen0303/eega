@@ -62,7 +62,7 @@ try {
                                     }
                                     ?></td>
                                 <td><?=$row['participant_handicap_differential'] ?></td>
-                                <td><?=$row['participant_date'] ?></td>
+                                <td><?=$row['event_date'] ?></td>
                             </tr>
                             <?php
                         }

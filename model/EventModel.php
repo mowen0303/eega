@@ -44,7 +44,7 @@ class EventModel extends Model
 
     public function getNextEvent(){
         $today = date("Y-m-d");
-        $sql = "SELECT * FROM `event` WHERE event_date >= ? LIMIT 0,1";
+        $sql = "SELECT * FROM `event` WHERE event_date >= ? ORDER BY event_date LIMIT 0,1";
         return $this->sqltool->getRowBySql($sql,[$today]);
     }
 
@@ -413,7 +413,7 @@ class EventModel extends Model
                 $participantInsert['participant_handicap_differential'] = $handicapDifferential;
 
                 //计算index
-                $sql = "SELECT t.* FROM (SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND event_date < ? ORDER BY event_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
+                $sql = "SELECT t.* FROM (SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND participant_score IS NOT NULL AND event_date < ? ORDER BY event_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
                 $participantArr = $this->sqltool->getListBySql($sql,[$userId,$participant['event_date']]);
                 $participantArrLength = count($participantArr);
 
