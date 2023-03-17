@@ -8,7 +8,7 @@ class RankModel extends Model
     public function updateRank($userId){
         //第4场：出现差点指数，但是不能用于第五场的球场差点计算
         //第5场：用前四场的差点指数，计算出球场差点，之后，再更新差点指数
-        $sql = "SELECT t.* FROM (SELECT * FROM participant WHERE participant_user_id = ? AND participant_handicap_differential IS NOT NULL ORDER BY participant_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
+        $sql = "SELECT t.* FROM (SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND participant_handicap_differential IS NOT NULL ORDER BY event_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
         $participantArr = $this->sqltool->getListBySql($sql,[$userId]);
         $participantArrLength = count($participantArr);
 
@@ -76,7 +76,7 @@ class RankModel extends Model
 
     public function getRankHistory($userId){
         global $place_arr;
-        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank_history LEFT JOIN participant ON rank_history_participant_id = participant_id LEFT JOIN user ON rank_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE rank_history_user_id = ?  ORDER BY participant_date DESC";
+        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM rank_history LEFT JOIN participant ON rank_history_participant_id = participant_id LEFT JOIN user ON rank_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE rank_history_user_id = ?  ORDER BY event_date DESC";
         $result = $this->sqltool->getListBySql($sql,[$userId]);
         foreach($result as $k => $v){
             $place = $place_arr[$v['event_location_id']];

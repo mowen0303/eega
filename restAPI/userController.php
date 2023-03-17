@@ -131,6 +131,7 @@ function getMembers(){
         $option['showAll'] = true;
         $option['orderBy'] = Helper::get('orderBy');
         $option['sort'] = Helper::get('sort');
+        $option['hideGroup'] = [1];
         $userId = $userModel->getCurrentUserId();
         $result = $userModel->getUsers([0],$option) or Helper::throwException(null,404);
         Helper::echoJson(200, "Success", $result);

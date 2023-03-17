@@ -14,7 +14,7 @@ try {
 <!--header start-->
 <div class="row bg-title">
     <div class="col-sm-4">
-        <h4 class="page-title">EVENT / SCORE </h4>
+        <h4 class="page-title">RANK / DETAIL </h4>
     </div>
     <label class="col-sm-8 control-label">
         <a href="/admin/rank/index.php?s=rank-list" class="btn btn-info pull-right m-l-10">Back</a>
@@ -62,7 +62,7 @@ try {
                                     }
                                     ?></td>
                                 <td><?=$row['participant_handicap_differential'] ?></td>
-                                <td><?=$row['participant_date'] ?></td>
+                                <td><?=$row['event_date'] ?></td>
                             </tr>
                             <?php
                         }

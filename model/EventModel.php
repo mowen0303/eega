@@ -35,7 +35,7 @@ class EventModel extends Model
             return "已结束";
         }else if($time <= 3600 * 24){
             return "报名已锁定";
-        }else if($time <= 3600 * 24 * 10){
+        }else if($time <= 3600 * 24 * 14){
             return "开放报名";
         }else{
             return "未开放";
@@ -77,7 +77,7 @@ class EventModel extends Model
         if ($orderBy) {
             $orderCondition = "{$orderBy} {$sequence},";
         }
-        $sql = "SELECT * FROM event WHERE true {$whereCondition} ORDER BY {$orderCondition} event_id DESC";
+        $sql = "SELECT * FROM event WHERE true {$whereCondition} ORDER BY {$orderCondition} event_date DESC, event_id DESC";
         // if(array_sum($id)!=0){
         //     $result = $this->sqltool->getListBySql($sql,$bindParams);
         // }else{
@@ -211,7 +211,7 @@ class EventModel extends Model
             }else if($eventStatus == "已结束"){
                 Helper::throwException("报名失败，活动已结束。");
             }else if($eventStatus == "未开放"){
-                Helper::throwException("报名失败，活动暂未开放，最早报名时间为活动开始前10日。");
+                Helper::throwException("报名失败，活动还未开放报名。");
             }
         }
         
@@ -254,7 +254,13 @@ class EventModel extends Model
 
         $sql = "DELETE FROM participant WHERE participant_event_id = ? AND participant_user_id = ?";
         $this->sqltool->query($sql,[$eventId,$userId]);
-        return $this->sqltool->affectedRows;
+        $result = $this->sqltool->affectedRows;
+        if($result){
+            $this->updateScoreIndex($userId,$event['event_date']);
+            $rankModel = new RankModel();
+            $rankModel->updateRank($userId);
+        }
+        return $result;
     }
 
     public function deleteEventByIds(){
@@ -264,20 +270,104 @@ class EventModel extends Model
         return $deletedRows;
     }
 
+    // public function updateScore(){
+    //     $id = Helper::post("participant_id");
+    //     $score = Helper::post("participant_score",'Score is required');
+    //     $t = Helper::post("participant_t",'Please select T type');
+    //     $sql = "SELECT * FROM participant WHERE participant_id = ?";
+    //     $participantRow = $this->sqltool->getRowBySql($sql,[$id]);
+    //     $userId = $participantRow['participant_user_id'];
+
+    //     $eventId = $participantRow['participant_event_id'];
+    //     $sql = "SELECT * FROM event WHERE event_id = ?";
+    //     $event = $this->sqltool->getRowBySql($sql,[$eventId]);
+    //     $eventLocationId = $event['event_location_id'];
+
+
+    //     global $place_arr;
+    //     $place = $place_arr[$eventLocationId];
+
+    //     $rating = $place->{$t}->rating;
+    //     $slope = $place->{$t}->slope;
+    //     $par = $place->{$t}->par;
+
+    //     $handicapDifferential = round(($score - $rating) * 113 / $slope, 1);
+
+    //     $participantInsert = [];
+    //     $participantInsert['participant_score'] = $score;
+    //     $participantInsert['participant_t'] = $t;
+    //     $participantInsert['participant_date'] = $event['event_date'];
+    //     $participantInsert['participant_handicap_differential'] = $handicapDifferential;
+
+    //     //计算index
+    //     $sql = "SELECT t.* FROM (SELECT * FROM participant WHERE participant_user_id = ? AND participant_handicap_differential IS NOT NULL AND participant_date < ? ORDER BY participant_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
+    //     $participantArr = $this->sqltool->getListBySql($sql,[$userId,$event['event_date']]);
+    //     $participantArrLength = count($participantArr);
+
+    //     $sql = "DELETE FROM participant_history WHERE participant_history_calculate_for_participant_id = ?";
+    //     $this->sqltool->query($sql,[$id]);
+
+    //     if($participantArrLength >= 4){
+    //         $validateCount = floor($participantArrLength/2);
+
+    //         $sql = "";
+    //         $differential = 0;
+    //         for($i = 0; $i < $participantArrLength; $i ++){
+    //             $participantId = $participantArr[$i]['participant_id'];
+    //             if($i < $validateCount){
+    //                 $differential += $participantArr[$i]['participant_handicap_differential'];
+    //                 $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,1);";
+    //             }else{
+    //                 $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,0);";
+    //             }
+    //         }
+    //         $this->sqltool->mysqli->multi_query($sql);
+    //         while ($this->sqltool->mysqli->next_result()) {;}
+
+    //         $participantInsert['participant_handicap_index'] = round($differential / $validateCount * 0.96,1);
+    //         $participantInsert['participant_net_score'] = round($score - ($participantInsert['participant_handicap_index'] * $slope / 113 + ($rating - $par)));
+    //     }else{
+    //         $participantInsert['participant_handicap_index'] = NULL;
+    //         $participantInsert['participant_net_score'] = NULL;
+    //     }
+
+    //     $this->updateRowById('participant',$id,$participantInsert,false);
+
+    //     $rankModel = new RankModel();
+    //     $rankModel->updateRank($userId);
+
+    //     $sql = "SELECT * FROM participant WHERE participant_id = ?";
+    //     $result = $this->sqltool->getRowBySql($sql,[$id]);
+    //     $result['rating'] = $rating;
+    //     $result['slope'] = $slope;
+    //     $result['par'] = $par;
+    //     return $result;
+    // }
+
     public function updateScore(){
+        
         $id = Helper::post("participant_id");
         $score = Helper::post("participant_score",'Score is required');
         $t = Helper::post("participant_t",'Please select T type');
-        $sql = "SELECT * FROM participant WHERE participant_id = ?";
+        $arr["participant_id"] = $id;
+        $arr["participant_score"] = $score;
+        $arr["participant_t"] = $t;
+        
+        $this->updateRowById('participant',$id,$arr,false);
+
+        $sql = "SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_id = ?";
         $participantRow = $this->sqltool->getRowBySql($sql,[$id]);
         $userId = $participantRow['participant_user_id'];
+        $eventDate = $participantRow['event_date'];
+        
+        $this->updateScoreIndex($userId,$eventDate);
+        $rankModel = new RankModel();
+        $rankModel->updateRank($userId);
 
-        $eventId = $participantRow['participant_event_id'];
-        $sql = "SELECT * FROM event WHERE event_id = ?";
-        $event = $this->sqltool->getRowBySql($sql,[$eventId]);
-        $eventLocationId = $event['event_location_id'];
+        $sql = "SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_id = ?";
+        $result = $this->sqltool->getRowBySql($sql,[$id]);
 
-
+        $eventLocationId = $result['event_location_id'];
         global $place_arr;
         $place = $place_arr[$eventLocationId];
 
@@ -285,62 +375,89 @@ class EventModel extends Model
         $slope = $place->{$t}->slope;
         $par = $place->{$t}->par;
 
-        $handicapDifferential = round(($score - $rating) * 113 / $slope, 1);
-
-        $participantInsert = [];
-        $participantInsert['participant_score'] = $score;
-        $participantInsert['participant_t'] = $t;
-        $participantInsert['participant_date'] = $event['event_date'];
-        $participantInsert['participant_handicap_differential'] = $handicapDifferential;
-
-        //计算index
-        $sql = "SELECT t.* FROM (SELECT * FROM participant WHERE participant_user_id = ? AND participant_handicap_differential IS NOT NULL AND participant_date < ? ORDER BY participant_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
-        $participantArr = $this->sqltool->getListBySql($sql,[$userId,$event['event_date']]);
-        $participantArrLength = count($participantArr);
-
-        $sql = "DELETE FROM participant_history WHERE participant_history_calculate_for_participant_id = ?";
-        $this->sqltool->query($sql,[$id]);
-
-        if($participantArrLength >= 4){
-            $validateCount = floor($participantArrLength/2);
-
-            $sql = "";
-            $differential = 0;
-            for($i = 0; $i < $participantArrLength; $i ++){
-                $participantId = $participantArr[$i]['participant_id'];
-                if($i < $validateCount){
-                    $differential += $participantArr[$i]['participant_handicap_differential'];
-                    $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,1);";
-                }else{
-                    $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,0);";
-                }
-            }
-            $this->sqltool->mysqli->multi_query($sql);
-            while ($this->sqltool->mysqli->next_result()) {;}
-
-            $participantInsert['participant_handicap_index'] = round($differential / $validateCount * 0.96,1);
-            $participantInsert['participant_net_score'] = round($score - ($participantInsert['participant_handicap_index'] * $slope / 113 + ($rating - $par)));
-        }else{
-            $participantInsert['participant_handicap_index'] = NULL;
-            $participantInsert['participant_net_score'] = NULL;
-        }
-
-        $this->updateRowById('participant',$id,$participantInsert,false);
-
-        $rankModel = new RankModel();
-        $rankModel->updateRank($userId);
-
-        $sql = "SELECT * FROM participant WHERE participant_id = ?";
-        $result = $this->sqltool->getRowBySql($sql,[$id]);
         $result['rating'] = $rating;
         $result['slope'] = $slope;
         $result['par'] = $par;
         return $result;
     }
 
+    public function updateScoreIndex($userId,$eventDate){
+        
+        $sql = "SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = $userId AND event_date >= $eventDate";
+
+        $participantList = $this->sqltool->getListBySql($sql);
+
+        if($participantList){
+            foreach($participantList as $k => $participant){
+                // $sql = "SELECT * FROM participant WHERE participant_event_id = $eventId AND participant_user_id = $userId";
+                //$participant = $this->sqltool->getRowBySql($sql);
+                $eventId = $participant['event_id'];
+                $id = $participant['participant_id'];
+                $score = $participant['participant_score'];
+                $t = $participant['participant_t'];
+                $eventLocationId = $participant['event_location_id'];
+
+
+                global $place_arr;
+                $place = $place_arr[$eventLocationId];
+                $rating = $place->{$t}->rating;
+                $slope = $place->{$t}->slope;
+                $par = $place->{$t}->par;
+
+                $handicapDifferential = round(($score - $rating) * 113 / $slope, 1);
+
+                $participantInsert = [];
+                $participantInsert['participant_score'] = $score;
+                $participantInsert['participant_t'] = $t;
+                $participantInsert['participant_date'] = $participant['event_date'];
+                $participantInsert['participant_handicap_differential'] = $handicapDifferential;
+
+                //计算index
+                $sql = "SELECT t.* FROM (SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND event_date < ? ORDER BY event_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
+                $participantArr = $this->sqltool->getListBySql($sql,[$userId,$participant['event_date']]);
+                $participantArrLength = count($participantArr);
+
+                // print_r($participantArr);
+
+                $sql = "DELETE FROM participant_history WHERE participant_history_calculate_for_participant_id = ?";
+                $this->sqltool->query($sql,[$id]);
+
+                if($participantArrLength >= 4){
+                    $validateCount = floor($participantArrLength/2);
+
+                    $sql = "";
+                    $differential = 0;
+                    for($i = 0; $i < $participantArrLength; $i ++){
+                        $participantId = $participantArr[$i]['participant_id'];
+                        if($i < $validateCount){
+                            $differential += $participantArr[$i]['participant_handicap_differential'];
+                            $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,1);";
+                        }else{
+                            $sql .= "INSERT INTO participant_history (participant_history_calculate_for_participant_id, participant_history_user_id, participant_history_participant_id,participant_history_is_used_for_calculate) VALUES ($id,$userId,$participantId,0);";
+                        }
+                    }
+                    $this->sqltool->mysqli->multi_query($sql);
+                    while ($this->sqltool->mysqli->next_result()) {;}
+
+                    $participantInsert['participant_handicap_index'] = round($differential / $validateCount * 0.96,1);
+                    $participantInsert['participant_net_score'] = round($score - ($participantInsert['participant_handicap_index'] * $slope / 113 + ($rating - $par)));
+                }else{
+                    $participantInsert['participant_handicap_index'] = NULL;
+                    $participantInsert['participant_net_score'] = NULL;
+                }
+
+                $this->updateRowById('participant',$id,$participantInsert,false);
+            }
+        }
+
+
+        
+
+    }
+
     public function getParticipantHistory($participantId){
         //event.event_title,event.event_date,event.event_location_id
-        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM participant_history LEFT JOIN participant ON participant_history_participant_id = participant_id LEFT JOIN user ON participant_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE participant_history_calculate_for_participant_id = ?  ORDER BY participant_date DESC";
+        $sql = "SELECT *,user_avatar,user_last_name,user_first_name FROM participant_history LEFT JOIN participant ON participant_history_participant_id = participant_id LEFT JOIN user ON participant_history_user_id = user_id LEFT JOIN event ON participant_event_id = event_id WHERE participant_history_calculate_for_participant_id = ?  ORDER BY event_date DESC";
         $result = $this->sqltool->getListBySql($sql,[$participantId]);
         global $place_arr;
         foreach($result as $k => $v){

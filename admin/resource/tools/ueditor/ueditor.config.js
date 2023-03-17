@@ -37,7 +37,7 @@
             'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'blockquote',  '|', 'forecolor', 'backcolor','|', 'insertorderedlist', 'insertunorderedlist',
              'paragraph', 'fontsize', '|',
             'justifyleft', 'justifycenter', 'justifyright','|',
-            'link', 'unlink', '|', 'insertimage','|', 'inserttable','drafts','removeformat', 'autotypeset','pasteplain','source',
+            'link', 'unlink', '|', 'insertimage','|', 'inserttable','drafts','removeformat', 'autotypeset','pasteplain','source','attachment'
         ]]
 		// , toolbars: [[
         //     'fullscreen', 'source', '|', 'undo', 'redo', '|',

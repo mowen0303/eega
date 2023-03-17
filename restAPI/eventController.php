@@ -167,7 +167,7 @@ function deleteParticipant() {
     try {
         $userModel = new \model\UserModel();
         $eventModel = new \model\EventModel();
-        $userModel->isCurrentUserHasAuthority('EVENT', 'UPDATE') or Helper::throwException(null, 403);
+        $userModel->isCurrentUserHasAuthority('EVENT', 'ENROLL') or Helper::throwException(null, 403);
         $eventId = Helper::post('participant_event_id','missing event id');
         $userId = $userModel->getCurrentUserId();
         $result = $eventModel->deleteParticipant($eventId,$userId,true);

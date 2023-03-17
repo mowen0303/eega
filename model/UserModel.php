@@ -241,6 +241,11 @@ class UserModel extends Model
             $whereCondition .= " AND user_id IN ($userIds)";
         }
 
+        if($option['hideGroup']){
+            $categoryIds = implode(",",$option['hideGroup']);
+            $whereCondition .= " AND user_user_category_id NOT IN ($categoryIds) ";
+        }
+
         if($option['searchValue']){
             $whereCondition .= "AND (
             user_name LIKE '%{$option['searchValue']}%' 
@@ -380,11 +385,11 @@ class UserModel extends Model
 
     public function updatePassword($userId){
         $arr = [];
-        $password1 = Helper::post('pw1',"New password can not be null");
-        $password2 = Helper::post('pw2',"Confirm new password can not be null");
+        $password1 = Helper::post('pw1',"New password can not be null",6);
+        $password2 = Helper::post('pw2',"Confirm new password can not be null",6);
         $isAdminManage = (int) Helper::post('isAdminManage');
         if(!$isAdminManage){
-            $password0 = md5(Helper::post('pw0',"Old password can not be null"));
+            $password0 = md5(Helper::post('pw0',"Current password can not be null",6));
             $sql = "SELECT user_id FROM user WHERE user_id IN ({$userId}) AND user_pwd = '{$password0}'";
             $this->sqltool->getRowBySql($sql) or Helper::throwException("Your current password is not correct");
 

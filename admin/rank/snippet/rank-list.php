@@ -13,7 +13,7 @@ try {
 <!--header start-->
 <div class="row bg-title">
     <div class="col-sm-4">
-        <h4 class="page-title">EVENT / SCORE </h4>
+        <h4 class="page-title">RANK</h4>
     </div>
 </div>
 <!--header end-->

@@ -134,6 +134,7 @@ try {
                     <li><a href="/admin/announce/index.php?s=announce-list" class="waves-effect"><i class="mdi mdi-volume-high fa-fw"></i> <span class="hide-menu">Announce<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/rank/index.php?s=rank-list" class="waves-effect"><i class="mdi mdi-trophy fa-fw"></i> <span class="hide-menu">Rank<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/event/index.php?s=event-list" class="waves-effect"><i class="mdi mdi-airballoon fa-fw"></i> <span class="hide-menu">Event<span class="fa arrow"></span></span></a></li>
+                    <li><a href="/admin/article/index.php?s=article-list" class="waves-effect"><i class="mdi mdi-image-multiple fa-fw"></i> <span class="hide-menu">Photo<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/sponsor/index.php?s=sponsor-page" class="waves-effect"><i class="mdi mdi-octagram fa-fw"></i> <span class="hide-menu">Sponsor<span class="fa arrow"></span></span></a></li>
                     <li><a href="/admin/user/index.php?s=user-list" class="waves-effect"><i class="mdi mdi-account-circle  fa-fw"></i> <span class="hide-menu">User<span class="fa arrow"></span></span></a></li>
 
