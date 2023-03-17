@@ -8,7 +8,7 @@ class RankModel extends Model
     public function updateRank($userId){
         //第4场：出现差点指数，但是不能用于第五场的球场差点计算
         //第5场：用前四场的差点指数，计算出球场差点，之后，再更新差点指数
-        $sql = "SELECT t.* FROM (SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND participant_handicap_differential IS NOT NULL ORDER BY event_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
+        $sql = "SELECT t.* FROM (SELECT * FROM participant LEFT JOIN event ON participant_event_id = event_id WHERE participant_user_id = ? AND participant_score IS NOT NULL ORDER BY event_date DESC LIMIT 0,20) AS t ORDER BY t.participant_handicap_differential ASC";
         $participantArr = $this->sqltool->getListBySql($sql,[$userId]);
         $participantArrLength = count($participantArr);
 
