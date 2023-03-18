@@ -167,10 +167,10 @@ class EventModel extends Model
 
         if($orderBy == "participant_score"){
             // $orderCondition .= "participant_net_score desc, participant_handicap_index ASC, participant_handicap_differential ASC, ";
-            $orderCondition = "participant_score IS NULL, participant_score ASC, participant_handicap_index IS NULL, participant_handicap_index DESC, participant_net_score asc, ";
+            $orderCondition = "participant_score IS NULL, participant_score ASC, participant_handicap_index IS NULL, participant_handicap_index DESC, participant_net_score asc, participant_handicap_differential asc,";
         }else if($orderBy == "participant_net_score"){
             // $orderCondition = "(case when participant_net_score is null then 1 else 0 end) asc, participant_net_score {$sequence},";
-            $orderCondition = "participant_net_score IS NULL, participant_net_score ASC, participant_handicap_index IS NULL, participant_handicap_index ASC, participant_net_score asc, ";
+            $orderCondition = "participant_net_score IS NULL, participant_net_score ASC, participant_handicap_index IS NULL, participant_handicap_index ASC, participant_net_score asc, participant_handicap_differential asc,";
         }
 
         $sql = "SELECT participant.*,event.event_location_id,event.event_title,event.event_date,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN event ON participant_event_id = event_id LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id IN ($eventId) ORDER BY {$orderCondition} participant_id DESC";
