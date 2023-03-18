@@ -165,8 +165,12 @@ class EventModel extends Model
             $orderCondition = "{$orderBy} {$sequence},";
         }
 
-        if($orderBy == "participant_net_score"){
-            $orderCondition = "(case when participant_net_score is null then 1 else 0 end) asc, participant_net_score {$sequence},";
+        if($orderBy == "participant_score"){
+            // $orderCondition .= "participant_net_score desc, participant_handicap_index ASC, participant_handicap_differential ASC, ";
+            $orderCondition = "participant_score IS NULL, participant_score ASC, participant_handicap_index IS NULL, participant_handicap_index DESC, participant_net_score asc, ";
+        }else if($orderBy == "participant_net_score"){
+            // $orderCondition = "(case when participant_net_score is null then 1 else 0 end) asc, participant_net_score {$sequence},";
+            $orderCondition = "participant_net_score IS NULL, participant_net_score ASC, participant_handicap_index IS NULL, participant_handicap_index ASC, participant_net_score asc, ";
         }
 
         $sql = "SELECT participant.*,event.event_location_id,event.event_title,event.event_date,user_first_name,user_last_name,user_avatar FROM participant LEFT JOIN event ON participant_event_id = event_id LEFT JOIN user ON participant_user_id = user_id WHERE participant_event_id IN ($eventId) ORDER BY {$orderCondition} participant_id DESC";
@@ -484,6 +488,20 @@ class EventModel extends Model
             $sort = "desc";
         }
         return " href='/admin/event/index.php?s=event-list-score&eventId={$eventId}&orderBy={$orderBy}&sort={$sort}' data-hl-orderby='{$orderBy}' ";
+    }
+
+    function getEventListWithScore(){
+        $sql = "SELECT participant_event_id FROM `participant` GROUP BY participant_event_id HAVING sum(participant_score) > 0";
+        $selectedEvents = $this->sqltool->getListBySql($sql);
+        if($selectedEvents){
+            $eventIds = [];
+            foreach($selectedEvents as $v){
+                $eventIds[] = $v['participant_event_id'];
+            }
+            return $this->getEvents($eventIds);
+        }else{
+            return [];
+        }
     }
 
 

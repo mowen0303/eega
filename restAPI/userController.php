@@ -57,7 +57,7 @@ function modifyUser() {
         }else{
             //添加
             $userModel->isCurrentUserHasAuthority('USER', 'ADD') or Helper::throwException(null, 403);
-            $userModel->modifyUser();
+            $userModel->modifyUser(0,true);
         }
         Helper::echoJson(200, "Success! {$userModel->imgError}", null, null, null, Helper::echoBackBtn(0,true));
     } catch (Exception $e) {

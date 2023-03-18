@@ -216,6 +216,17 @@ function updateScore() {
 }
 
 
+function getEventListWithScore() {
+    try {
+        $eventModel = new \model\EventModel();
+        $result = $eventModel->getEventListWithScore();
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
+
 function getEventScore() {
     try {
         $userModel = new \model\UserModel();
