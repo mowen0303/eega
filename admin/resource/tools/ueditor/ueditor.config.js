@@ -34,10 +34,10 @@
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
         , toolbars: [[
-            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'blockquote',  '|', 'forecolor', 'backcolor','|', 'insertorderedlist', 'insertunorderedlist',
+            'undo', 'redo','|','bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'blockquote',  '|', 'forecolor', 'backcolor','|', 'insertorderedlist', 'insertunorderedlist',
              'paragraph', 'fontsize', '|',
             'justifyleft', 'justifycenter', 'justifyright','|',
-            'link', 'unlink', '|', 'insertimage','|', 'inserttable','drafts','removeformat', 'autotypeset','pasteplain','source','attachment'
+            'link', 'unlink', '|', 'insertimage','|', 'inserttable','drafts','removeformat', 'autotypeset','pasteplain','attachment','source',
         ]]
 		// , toolbars: [[
         //     'fullscreen', 'source', '|', 'undo', 'redo', '|',
@@ -368,7 +368,7 @@
 		//output xss过滤
 		,outputXssFilter: true
 		// xss过滤白名单 名单来源: https://raw.githubusercontent.com/leizongmin/js-xss/master/lib/default.js
-		,whitList: {
+		,whiteList: {
 			a:      ['target', 'href', 'title', 'class', 'style'],
 			abbr:   ['title', 'class', 'style'],
 			address: ['class', 'style'],
