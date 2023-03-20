@@ -77,6 +77,14 @@ class EventModel extends Model
         if ($orderBy) {
             $orderCondition = "{$orderBy} {$sequence},";
         }
+
+
+        if($option['onlyShowValidate'] == true){
+            $today = date("Y-m-d");
+            $whereCondition .= " AND event_date >= '$today' ";
+            $orderCondition = "event_date ASC,";
+        }
+
         $sql = "SELECT * FROM event WHERE true {$whereCondition} ORDER BY {$orderCondition} event_date DESC, event_id DESC";
         // if(array_sum($id)!=0){
         //     $result = $this->sqltool->getListBySql($sql,$bindParams);
@@ -269,6 +277,10 @@ class EventModel extends Model
 
     public function deleteEventByIds(){
         $eventIds = Helper::request('id',"Id can no be null");
+        $IDs = Helper::convertIDArrayToString($eventIds);
+        $sql = "SELECT * FROM participant WHERE participant_event_id IN ($IDs)";
+        $result = $this->sqltool->getListBySql($sql);
+        !$result or Helper::throwException("Before you delete the event(s), you have to remove all the participants within the event(s) you selected.");
         if(!is_array($eventIds)) $userIds = [$eventIds];
         $deletedRows = $this->deleteByIDsReally('event', $eventIds);
         return $deletedRows;

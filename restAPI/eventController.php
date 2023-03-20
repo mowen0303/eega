@@ -60,6 +60,18 @@ function getEventList() {
     }
 }
 
+function getValidateEventList() {
+    try {
+        $userModel = new \model\UserModel();
+        $eventModel = new \model\EventModel();
+        $option['onlyShowValidate'] = true;
+        $result = $eventModel->getEvents([0],$option);
+        Helper::echoJson(200, "Success", $result);
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), $e->getMessage());
+    }
+}
+
 function getEventReviewList() {
     try {
         $userModel = new \model\UserModel();
