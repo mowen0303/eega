@@ -5,7 +5,7 @@ function getAnnounceList() {
     try {
         $announceModel = new \model\AnnounceModel();
         $result = $announceModel->getAnnounces([0]);
-        Helper::echoJson(200, "Success", $result,event);
+        Helper::echoJson(200, "Success", $result);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
     }
@@ -17,7 +17,7 @@ function getAnnounceOfHomePage() {
         $result = $announceModel->getAnnounces([1,2]);
         $eventModel = new \model\EventModel();
         $event = $eventModel->getNextEvent();
-        $event = $eventModel->getEvents([$event['event_id']])[0];
+        // $event = $eventModel->getEvents([$event['event_id']])[0];
         Helper::echoJson(200, "Success", $result,$event);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
