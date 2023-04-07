@@ -17,7 +17,12 @@ function getAnnounceOfHomePage() {
         $result = $announceModel->getAnnounces([1,2]);
         $eventModel = new \model\EventModel();
         $event = $eventModel->getNextEvent();
-        // $event = $eventModel->getEvents([$event['event_id']])[0];
+        if($event){
+            $event = $eventModel->getEvents([$event['event_id']])[0];
+        }else{
+            $event = null;
+        }
+        // 
         Helper::echoJson(200, "Success", $result,$event);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());
