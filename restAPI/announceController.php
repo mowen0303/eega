@@ -22,7 +22,6 @@ function getAnnounceOfHomePage() {
         }else{
             $event = null;
         }
-        // 
         Helper::echoJson(200, "Success", $result,$event);
     } catch (Exception $e) {
         Helper::echoJson($e->getCode(), $e->getMessage());

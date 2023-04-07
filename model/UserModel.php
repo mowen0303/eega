@@ -1,5 +1,7 @@
 <?php
 namespace model;
+
+use DateTime;
 use \Model as Model;
 use \Helper as Helper;
 
@@ -97,7 +99,9 @@ class UserModel extends Model
      * @throws \Exception
      */
     public function updateUserCheckinLastTime(int $userId){
-        $sql = "UPDATE user SET user_last_login_time = current_timestamp() WHERE user_id = {$userId}";
+        $dt = new DateTime();
+        $datime = $dt->format('Y-m-d H:i:s');
+        $sql = "UPDATE user SET user_last_login_time = '$datime' WHERE user_id = {$userId}";
         $this->sqltool->query($sql);
     }
 
