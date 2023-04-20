@@ -27,15 +27,16 @@ class EventModel extends Model
     }
 
     public function getEventJoinStatus($eventDate){
-        $currentTime = strtotime(date("Y-m-d"));
+        // $currentTime = strtotime(date("Y-m-d"));
+        $currentTime = time();
         $time = strtotime($eventDate) - $currentTime;
-        if($time == 0){
-            return "今日比赛";
-        }else if($time < 0){
+        if($time <= -(3600 * 24)){
             return "已结束";
-        }else if($time <= 3600 * 24){
+        }else if($time <= 0 ){
+            return "今日比赛";
+        }else if($time <= 3600 * (24 + 8)){
             return "报名已锁定";
-        }else if($time <= 3600 * 24 * 14){
+        }else if($time <= (3600 * 24 * 7 - 3600 * 8)){
             return "开放报名";
         }else{
             return "未开放";
