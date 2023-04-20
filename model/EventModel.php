@@ -36,7 +36,7 @@ class EventModel extends Model
             return "今日比赛";
         }else if($time <= 3600 * (24 + 8)){
             return "报名已锁定";
-        }else if($time <= (3600 * 24 * 7 - 3600 * 8)){
+        }else if($time <= (3600 * 24 * 14 - 3600 * 8)){
             return "开放报名";
         }else{
             return "未开放";
