@@ -205,7 +205,7 @@ class EventModel extends Model
         $event = $this->sqltool->getRowBySql($sql,[$eventId]);
         $event or Helper::throwException('Event do not exist');
 
-        if($index < 0 || $index >$event['event_max_participant']){
+        if($index < 0 || $index >= $event['event_max_participant']){
             Helper::throwException('Index is incorrect');
         }
 
