@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 30, 2023 at 12:17 AM
+-- Generation Time: Apr 30, 2023 at 12:31 AM
 -- Server version: 10.3.37-MariaDB-0ubuntu0.20.04.1
 -- PHP Version: 7.3.33-8+ubuntu20.04.1+deb.sury.org+1
 
@@ -153,8 +153,7 @@ INSERT INTO `event` (`event_id`, `event_title`, `event_description`, `event_date
 (32, '9月19日非CL 郭涛友军订场', '郭涛友军订场', '2023-09-19', 'week', 53, 24, NULL, NULL),
 (33, '9月鹰会年赛 David梁/柴钢双会长杯 请老梁/柴刚订场', '老梁/柴刚负责组织比赛并订场', '2023-09-26', 'month', 70, 60, NULL, NULL),
 (35, '“会长杯”义工报名 - 感谢鹰友的爱心', '请大家根据自己的时间安排，报名“会长杯”义工，感谢鹰友的爱心支持！', '2023-06-15', 'month', 70, 20, NULL, NULL),
-(37, '23年首秀', '1240、1250、1300、1310 共四组\r\n拿到会待价格 8折优惠! 60+还有折扣\r\n如果12人以上参加活动，成绩就在网站录入', '2023-04-20', 'week', 66, 16, NULL, NULL),
-(38, '周活动', '12:20/30 \r\n会待价格 113元包车 税。为确保，请报名鹰友23号EMT球款: youjunlu@gmail.com', '2023-04-25', 'week', 9, 8, NULL, NULL);
+(37, '23年首秀', '1240、1250、1300、1310 共四组\r\n拿到会待价格 8折优惠! 60+还有折扣\r\n如果12人以上参加活动，成绩就在网站录入', '2023-04-20', 'week', 66, 16, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -446,7 +445,6 @@ INSERT INTO `participant` (`participant_id`, `participant_event_id`, `participan
 (399, 12, 53, 0, NULL, 0, '0.0', '9.2', NULL, '2023-05-02'),
 (402, 12, 98, 9, NULL, 0, '0.0', '13.1', NULL, '2023-05-02'),
 (403, 12, 36, 4, NULL, NULL, NULL, NULL, NULL, NULL),
-(410, 38, 62, 8, NULL, NULL, NULL, NULL, NULL, NULL),
 (411, 12, 100, 5, NULL, NULL, NULL, NULL, NULL, NULL),
 (413, 12, 37, 6, NULL, NULL, NULL, NULL, NULL, NULL),
 (414, 12, 29, 7, NULL, NULL, NULL, NULL, NULL, NULL),
