@@ -581,6 +581,15 @@ class UserModel extends Model
         $sql = "select count(user_id) as amount from user";
         return $this->sqltool->getRowBySql($sql, null);
     }
+
+    public function updateUserGroupToNewGroup(){
+        $oldGroupId = Helper::request('old_user_user_category_id','Id can not be null');
+        $newGroupId = Helper::request('new_user_user_category_id','Id can not be null');
+        $newGroupId == 1 && Helper::throwException('new group can not be admin');
+        $oldGroupId == $newGroupId && Helper::throwException("Can not same group");
+        $sql = "UPDATE user SET user_user_category_id = $newGroupId WHERE user_user_category_id = $oldGroupId";
+        return $this->sqltool->query($sql);
+    }
 }
 
 

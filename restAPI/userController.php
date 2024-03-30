@@ -65,6 +65,17 @@ function modifyUser() {
     }
 }
 
+function updateUserGroupToNewGroup() {
+    try {
+        $userModel = new \model\UserModel();
+        $userModel->isCurrentUserHasAuthority('USER', 'UPDATE') or Helper::throwException(null, 403);
+        $userModel->updateUserGroupToNewGroup();
+        Helper::echoJson(200, "Success! {$userModel->imgError}", null, null, null, Helper::echoBackBtn(0,true));
+    } catch (Exception $e) {
+        Helper::echoJson($e->getCode(), "Failed : {$e->getMessage()} {$userModel->imgError}");
+    }
+}
+
 function updateMyProfile() {
     try {
         $userModel = new \model\UserModel();

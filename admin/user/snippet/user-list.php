@@ -15,6 +15,7 @@ try {
     </div>
     <label class="col-sm-8 control-label">
         <?php Helper::echoBackBtn(1);?>
+        <a href="/admin/user/index.php?s=user-list-type-change-form" class="btn btn-danger pull-right m-l-10"> Update User Type</a>
         <a href="/admin/user/index.php?s=user-list-form" class="btn btn-danger pull-right"><i class="fas fa-plus-circle"></i>  Add User</a>
     </label>
 </div>
