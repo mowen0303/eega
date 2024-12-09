@@ -20,3 +20,4 @@
 [Mon Mar 06 16:33:07.656337 2023] [access_compat:error] [pid 2023983] [client 70.52.143.252:50082] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
 [Mon Mar 06 16:33:08.836428 2023] [access_compat:error] [pid 2026314] [client 70.52.143.252:50072] AH01797: client denied by server configuration: /var/www/eega/upload/index.php
 [Sun Nov 12 22:00:28.179396 2023] [authz_core:error] [pid 3042241] [client 103.98.213.70:52956] AH01630: client denied by server configuration: /var/www/eega/.htacess.php
+[Wed Nov 27 17:35:12.110302 2024] [access_compat:error] [pid 1530840] [client 185.153.151.180:53792] AH01797: client denied by server configuration: /var/www/eega/upload/upload.php
